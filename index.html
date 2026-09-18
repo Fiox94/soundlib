@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="SoundLib — 내 컴퓨터의 효과음 폴더를 색인해 찾고, 듣고, 재고, REAPER로 바로 보내는 macOS 앱.">
+<meta property="og:title" content="SoundLib">
+<meta property="og:description" content="수십만 개의 효과음에서 그 소리를 찾아 바로 DAW로.">
+<meta property="og:image" content="hero.jpg">
+<link rel="icon" type="image/png" href="icon.png">
+<title>SoundLib</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+  /* SoundLib 의 Patch Bay 세계를 그대로 가져온다 — 앱과 같은 새시 팔레트,
+     같은 패치 케이블 파랑. 하드웨어 세계라 일부러 어두운 한 벌만 쓴다. */
+  :root {
+    --chassis: #1b1917;
+    --panel: #242220;
+    --well: #100f0f;
+    --ridge: #423f38;
+    --text: #ece6d8;
+    --dim: #a29c8e;
+    --faint: #6c6862;
+    --cable: #4da3ff;
+    --cable-fill: #0a5cff;
+    --lamp: #6fb8ff;
+    --line: rgba(255,246,230,0.08);
+    --line2: rgba(255,246,230,0.15);
+    --groove-in: inset 0 1px 1px rgba(0,0,0,0.55), inset 0 -1px 0 rgba(255,246,230,0.05);
+    --groove-out: inset 0 1px 0 rgba(255,246,230,0.09), inset 0 -1px 1px rgba(0,0,0,0.5);
+    --display: 'Barlow Condensed', 'DIN Condensed', 'Noto Sans KR', sans-serif;
+    --body: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--chassis); }
+  body {
+    margin: 0; background: var(--chassis); color: var(--text);
+    font-family: var(--body); font-size: 16px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased; font-variant-numeric: tabular-nums;
+    word-break: keep-all; overflow-wrap: break-word;
+    background-image: repeating-linear-gradient(180deg, rgba(255,246,230,0.018) 0 1px, transparent 1px 3px);
+  }
+  ::selection { background: rgba(77,163,255,0.3); }
+  a { color: var(--cable); text-underline-offset: 3px; }
+  :focus-visible { outline: 2px solid var(--cable); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 20px; }
+
+  /* 상단 바 — 앱의 탑바처럼 새시 한 줄. */
+  .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    background: rgba(36,34,32,0.92); backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--line); box-shadow: var(--groove-out); }
+  .bar .wrap { display: flex; align-items: center; gap: 24px; height: 56px; }
+  .mark { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .mark img { width: 30px; height: 30px; }
+  .mark b { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: 0.16em; }
+  .mark b span { color: var(--cable); }
+  .bar nav { display: flex; gap: 22px; margin-left: auto; }
+  .bar nav a { color: var(--dim); text-decoration: none; font-size: 14px; }
+  .bar nav a:hover { color: var(--text); }
+  @media (max-width: 720px) { .bar nav { display: none; } }
+
+  .btn { display: inline-flex; align-items: center; gap: 9px; font: 600 15px/1 var(--body);
+    padding: 13px 20px; border-radius: 8px; text-decoration: none; cursor: pointer; border: 0; }
+  .btn-primary { background: var(--cable-fill); color: #fff;
+    box-shadow: inset 0 1px 0 var(--lamp), 0 0 0 1px var(--cable-fill), 0 4px 18px rgba(77,163,255,0.35); }
+  .btn-primary:hover { background: #1d6bff; }
+  .btn-primary .led { width: 7px; height: 7px; border-radius: 50%; background: #fff; box-shadow: 0 0 6px #fff; }
+  .btn-ghost { color: var(--text); background: var(--well); box-shadow: var(--groove-in); border: 1px solid var(--line2); }
+  .btn-ghost:hover { border-color: rgba(255,246,230,0.3); }
+  .btn[aria-disabled="true"] { background: var(--panel); color: var(--dim); box-shadow: var(--groove-in); cursor: default; }
+  .btn[aria-disabled="true"] .led { background: var(--faint); box-shadow: none; }
+  .bar .btn { padding: 9px 14px; font-size: 13px; }
+
+  /* 히어로 — 잭 소켓 아이콘과 실제 앱 화면. 과장 문구 없이 무엇을 하는지부터. */
+  .hero { padding-block: 72px 40px; }
+  .hero-top { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
+  .eyebrow-plate { display: inline-flex; gap: 8px; align-items: center; font-family: var(--display); font-weight: 600;
+    font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
+    padding: 5px 12px; border-radius: 6px; background: var(--well); box-shadow: var(--groove-in); }
+  .eyebrow-plate i { width: 6px; height: 6px; border-radius: 50%; background: var(--cable); box-shadow: 0 0 8px var(--cable); }
+  h1 { font-weight: 900; font-size: clamp(36px, 5.6vw, 64px); line-height: 1.15; letter-spacing: -0.02em;
+    margin: 20px 0 18px; text-wrap: balance; }
+  h1 em { font-style: normal; color: var(--cable); }
+  .lede { font-size: clamp(16px, 1.7vw, 19px); color: var(--dim); max-width: 38em; margin: 0 0 30px; }
+  .lede b { color: var(--text); font-weight: 500; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+  .cta small { color: var(--faint); font-size: 13px; }
+  .jack { width: clamp(150px, 20vw, 230px); aspect-ratio: 1; max-width: 100%; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)); }
+  @media (prefers-reduced-motion: no-preference) {
+    .jack { animation: breathe 4.5s ease-in-out infinite; }
+    @keyframes breathe { 50% { filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5)) drop-shadow(0 0 26px rgba(77,163,255,0.28)); } }
+  }
+  @media (max-width: 760px) { .hero-top { grid-template-columns: 1fr; } .jack { order: -1; width: 110px; } }
+
+  /* 스크린샷 틀 — 새시에 파묻힌 웰. */
+  .screen { margin: 48px 0 0; border-radius: 12px; padding: 10px; background: var(--panel);
+    box-shadow: var(--groove-out), 0 30px 80px rgba(0,0,0,0.55); border: 1px solid var(--line); }
+  .screen img { display: block; width: 100%; height: auto; border-radius: 6px; }
+  .screen figcaption, .shot figcaption { font-size: 12px; color: var(--faint); margin: 10px 4px 2px; }
+
+  /* 한 줄 요약 띠 — 제품이 실제로 약속하는 세 가지. */
+  .facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin: 72px 0 24px;
+    background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .facts div { background: var(--panel); padding: 22px 24px; box-shadow: var(--groove-out); }
+  .facts h3 { margin: 0 0 6px; font-size: 16px; font-weight: 700; }
+  .facts p { margin: 0; color: var(--dim); font-size: 14px; line-height: 1.6; }
+  @media (max-width: 760px) { .facts { grid-template-columns: 1fr; } }
+
+  /* 기능 — 제목은 왼쪽, 설명은 오른쪽, 화면은 그 아래 전폭. 목록 화면은
+     가로로 길어서 옆 칸에 두면 글자가 안 읽힌다. */
+  .features { padding-block: 40px; }
+  .feature { padding-block: 64px; border-top: 1px solid var(--line); }
+  .copy { display: grid; grid-template-columns: 5fr 7fr; column-gap: 56px; margin-bottom: 32px; }
+  .copy > .tag { grid-column: 1; grid-row: 1; }
+  .copy > h2 { grid-column: 1; grid-row: 2 / span 2; align-self: start; }
+  .copy > p { grid-column: 2; grid-row: 2; margin-top: 8px; }
+  .copy > ul { grid-column: 2; grid-row: 3; }
+  .feature .shot.narrow { max-width: 820px; margin-inline: auto; }
+  @media (max-width: 860px) {
+    .copy { grid-template-columns: 1fr; }
+    .copy > * { grid-column: 1 !important; grid-row: auto !important; }
+  }
+  .tag { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cable); }
+  .feature h2 { font-size: clamp(24px, 3vw, 34px); line-height: 1.3; font-weight: 800; margin: 8px 0 14px; letter-spacing: -0.01em; text-wrap: balance; }
+  .feature p { color: var(--dim); margin: 0 0 14px; max-width: 34em; }
+  .feature ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+  .feature li { color: var(--text); font-size: 15px; padding-left: 18px; position: relative; }
+  .feature li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--well); box-shadow: 0 0 0 1px var(--ridge); }
+  code, kbd { font-family: 'SF Mono', Menlo, monospace; font-size: 0.88em; background: var(--well); color: var(--text);
+    padding: 1px 6px; border-radius: 4px; box-shadow: var(--groove-in); }
+  .shot { margin: 0; border-radius: 10px; padding: 8px; background: var(--panel); border: 1px solid var(--line);
+    box-shadow: var(--groove-out), 0 18px 50px rgba(0,0,0,0.45); }
+  .shot img { display: block; width: 100%; height: auto; border-radius: 5px; }
+
+  /* 보내기 — 키 한 개. 키캡을 실제 사물처럼. */
+  .send { margin: 24px 0 40px; padding: 40px; border-radius: 12px; background: var(--panel);
+    border: 1px solid var(--line); box-shadow: var(--groove-out);
+    display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: center; }
+  .keycap { width: 104px; height: 104px; border-radius: 16px; display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 52px; color: var(--text);
+    background: linear-gradient(180deg, #3a3731, #25231f); border: 1px solid #4a463f;
+    box-shadow: inset 0 2px 0 rgba(255,246,230,0.14), 0 6px 0 #0d0c0b, 0 10px 24px rgba(0,0,0,0.5); }
+  .send h2 { margin: 0 0 8px; font-size: clamp(22px, 2.6vw, 30px); font-weight: 800; }
+  .send p { margin: 0; color: var(--dim); max-width: 44em; }
+  .daws { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .daws span { font-size: 13px; padding: 4px 10px; border-radius: 20px; background: var(--well); box-shadow: var(--groove-in); color: var(--dim); }
+  .daws span.on { color: var(--text); box-shadow: var(--groove-in), 0 0 0 1px var(--cable); }
+  @media (max-width: 640px) { .send { grid-template-columns: 1fr; padding: 28px 22px; } .keycap { width: 80px; height: 80px; font-size: 40px; } }
+
+  /* 단축키 — 몸으로 외우는 제품이라 몇 개는 보여준다. */
+  .keys { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px 28px; margin: 0; padding: 0; list-style: none; }
+  .keys li { display: flex; align-items: center; gap: 12px; color: var(--dim); font-size: 14px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .keys kbd { min-width: 34px; text-align: center; }
+
+  /* 다운로드 */
+  .dl { margin: 72px 0 0; padding: 48px 0 64px; border-top: 1px solid var(--line); }
+  .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+  @media (max-width: 860px) { .dl-grid { grid-template-columns: 1fr; gap: 32px; } }
+  .dl h2 { font-size: clamp(28px, 3.6vw, 42px); font-weight: 900; margin: 8px 0 14px; letter-spacing: -0.02em; }
+  .spec { display: grid; grid-template-columns: auto 1fr; gap: 8px 22px; margin: 22px 0 26px; font-size: 14px; }
+  .spec dt { color: var(--faint); }
+  .spec dd { margin: 0; color: var(--text); }
+  .steps { counter-reset: s; list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .steps li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 12px; color: var(--dim); }
+  .steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; color: var(--text); background: var(--well); box-shadow: var(--groove-in); }
+  .steps b { color: var(--text); font-weight: 500; }
+  .note { margin-top: 18px; padding: 14px 16px; border-radius: 8px; background: var(--well); box-shadow: var(--groove-in);
+    font-size: 13.5px; color: var(--dim); }
+
+  footer { border-top: 1px solid var(--line); padding-block: 26px 40px; color: var(--faint); font-size: 13px; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="SoundLib 처음으로"><img src="icon.png" alt=""><b>SOUND<span>LIB</span></b></a>
+    <nav aria-label="페이지 안내">
+      <a href="#find">찾기</a>
+      <a href="#measure">재기</a>
+      <a href="#recipe">레이어 레시피</a>
+      <a href="#download">다운로드</a>
+    </nav>
+    <a class="btn btn-primary" href="#download"><span class="led"></span>다운로드</a>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <div class="hero-top">
+      <div>
+        <span class="eyebrow-plate"><i></i>macOS · 효과음 라이브러리 관리</span>
+        <h1>수십만 개의 효과음에서<br><em>그 소리</em>를 찾아 바로 DAW로.</h1>
+        <p class="lede">
+          SoundLib은 <b>내 컴퓨터에 있는 효과음 폴더</b>를 색인해서 찾고, 듣고, 재고, 고른 소리를
+          <b>REAPER에 바로 꽂아 넣는</b> 데스크톱 앱입니다. 클라우드도, 계정도, 구독도 없습니다.
+        </p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#download"><span class="led"></span>macOS용 받기</a>
+          <a class="btn btn-ghost" href="#find">무엇을 하는지 보기</a>
+          <small>v1.0.0 · Apple Silicon</small>
+        </div>
+      </div>
+      <img class="jack" src="icon.png" alt="SoundLib 앱 아이콘 — 파랗게 켜진 잭 소켓">
+    </div>
+
+    <figure class="screen">
+      <img src="hero.jpg" width="1800" height="1125" alt="SoundLib 메인 화면. 왼쪽 라이브러리 트리, 가운데 파형 썸네일과 태그·라우드니스가 붙은 파일 목록, 아래에 선택한 칼 휘두르는 소리의 큰 파형.">
+      <figcaption>스크린샷은 데모용으로 합성한 효과음 40개로 찍었습니다.</figcaption>
+    </figure>
+
+    <div class="facts">
+      <div><h3>내 컴퓨터에서만</h3><p>색인·별점·태그·메모가 전부 이 기계 안에 남습니다. 인터넷이 없어도 그대로 동작합니다.</p></div>
+      <div><h3>원본은 건드리지 않음</h3><p>스캔은 목록만 만듭니다. 파일을 옮기거나 다시 쓰지 않습니다 — 이름 바꾸기처럼 직접 시킨 일만 빼고요.</p></div>
+      <div><h3>키보드로 전부</h3><p>↑↓로 훑고, 스페이스로 듣고, 숫자로 별점을 매기고, S로 보냅니다. 손을 마우스로 옮기지 않아도 됩니다.</p></div>
+    </div>
+  </section>
+
+  <section class="features wrap" aria-label="기능">
+    <article class="feature" id="find">
+      <div class="copy">
+        <span class="tag">Find</span>
+        <h2>파일 이름에 없는 단어로도 찾습니다</h2>
+        <p><code>clang</code> 이라는 이름의 파일은 하나도 없지만, 모루 타격·칼날 울림·검 부딪힘이 나옵니다. 영어 동의어 사전과 오타 교정, 그리고 라이브러리 안에서 스스로 배운 연관어로 검색을 넓힙니다.</p>
+        <ul>
+          <li><code>whoosh -light</code> — 빼고 싶은 말은 앞에 빼기</li>
+          <li><code>"metal hit"</code> — 붙어 있는 구문만</li>
+          <li><code>길이&lt;2</code> <code>bpm&gt;120</code> <code>채널=1</code> — 숫자 조건도 검색창에서</li>
+          <li>UCS 카테고리로 자동 분류, 탭마다 다른 검색</li>
+        </ul>
+      </div>
+      <figure class="shot"><img src="search.jpg" width="1600" height="255" loading="lazy" alt="검색창에 clang 을 입력한 결과. 모루 타격 3개, 칼날 울림 1개, 검 부딪힘 2개가 나왔다."></figure>
+    </article>
+
+    <article class="feature">
+      <div class="copy">
+        <span class="tag">Similar</span>
+        <h2>하나를 고르면, 비슷한 소리 순서로</h2>
+        <p>모든 파일에 소리 지문을 남겨 둡니다. 하나를 고르고 <b>비슷한 소리 찾기</b>를 누르면 이름이 달라도, 다른 팩에 들어 있어도 소리가 가까운 순서로 줄을 세웁니다. 유사도는 퍼센트로 같이 보여줍니다.</p>
+        <ul>
+          <li>“이것보다 조금 더 무거운 것” 을 이름 없이 찾기</li>
+          <li>여러 팩에 흩어진 같은 계열 소리 한눈에 보기</li>
+        </ul>
+      </div>
+      <figure class="shot"><img src="similar.jpg" width="1600" height="455" loading="lazy" alt="Air Pass Wide Slow 와 비슷한 소리 결과. 유사 100%, 97%, 84% 순서로 공기 가르는 소리와 검 휘두르는 소리가 위에 온다."></figure>
+    </article>
+
+    <article class="feature" id="measure">
+      <div class="copy">
+        <span class="tag">Measure</span>
+        <h2>들어서는 모르는 것을 숫자로</h2>
+        <p>라이브러리를 한 번 분석해 두면 목록에서 바로 보입니다. 라우드니스로 줄을 세우고, 파일마다 무엇이 재어졌고 무엇이 추정인지 구분해서 보여줍니다.</p>
+        <ul>
+          <li>EBU R128 라우드니스(LUFS) · 샘플 피크 · 클리핑 구간</li>
+          <li>스테레오 상관도 — 위상이 뒤집힌 파일을 미리</li>
+          <li>네 개의 성격 축: 무게 · 금속성 · 우쉬 · 날카로움</li>
+          <li>BWF · iXML 메타데이터 읽기와 쓰기</li>
+        </ul>
+      </div>
+      <figure class="shot"><img src="measure.jpg" width="1200" height="205" loading="lazy" alt="검 부딪힘 소리의 측정값: -15.1 LUFS, 피크 -0.2 dBFS, 무게 40%, 금속성 62%, 우쉬 0%, 날카로움 63%."></figure>
+    </article>
+
+    <article class="feature" id="recipe">
+      <div class="copy">
+        <span class="tag">Layer Recipe</span>
+        <h2>내가 레이어를 쌓는 방식을, 레시피로</h2>
+        <p>내 REAPER 프로젝트를 읽어서 “무거운 칼 휘두르기 = 금속 우쉬 + 공기 + 울림 꼬리” 처럼 소리를 겹친 자리를 찾아냅니다. 겹 사이의 시간차와 음량차는 그대로 두고, 재료만 라이브러리의 비슷한 소리로 바꿔 변주를 만듭니다.</p>
+        <ul>
+          <li>← → 로 변주를 넘기며 바로 들어보기</li>
+          <li>마음에 드는 조합을 트랙별로 REAPER에 보내기</li>
+        </ul>
+      </div>
+      <figure class="shot narrow"><img src="recipe.jpg" width="1240" height="505" loading="lazy" alt="레이어 레시피 창. '대검 휘두르기 — 무겁게' 레시피의 변주 3/19: 바디, 공기, 꼬리 세 겹과 각각의 시간차, 음량차, 파일 이름."></figure>
+    </article>
+
+    <article class="feature">
+      <div class="copy">
+        <span class="tag">Clean Up</span>
+        <h2>여러 폴더에 흩어진 같은 파일을 정리</h2>
+        <p>이름과 크기가 같은 파일은 확실한 중복으로, 소리만 비슷한 것은 따로 표시해 사람이 고르게 합니다. 별점·태그·메모를 붙여 둔 쪽을 남기고, 지우는 대신 <b>휴지통으로</b> 보내서 되돌릴 수 있습니다.</p>
+        <ul>
+          <li>몇 개, 얼마만큼 비워지는지 누르기 전에 보여주기</li>
+          <li>켤 때 하루 한 번 자동 백업(최근 7벌) · 이름 바꾸기 되돌리기</li>
+        </ul>
+      </div>
+      <figure class="shot narrow"><img src="dedupe.jpg" width="1240" height="893" loading="lazy" alt="중복 정리 창. 이름·크기가 같은 무리 2개는 체크되어 있고, 소리로 판단한 무리 2개는 체크가 비어 있다. 각 무리에서 남길 파일과 지울 파일이 표시된다."></figure>
+    </article>
+  </section>
+
+  <section class="wrap">
+    <div class="send">
+      <div class="keycap" aria-hidden="true">S</div>
+      <div>
+        <h2>S 한 번이면 DAW 편집 커서로</h2>
+        <p>고른 소리를 REAPER의 편집 커서 자리에 바로 넣습니다. 파형에서 구간을 잡아 두면 그 구간만 갑니다. 끌어다 놓아도 되고, 안 되는 환경에서는 클립보드로 넘깁니다 — 조용히 실패하지 않습니다.</p>
+        <div class="daws"><span class="on">REAPER</span><span>Pro Tools</span><span>그 밖의 DAW 5종</span><span>클립보드</span></div>
+      </div>
+    </div>
+
+    <ul class="keys" aria-label="자주 쓰는 단축키">
+      <li><kbd>↑</kbd><kbd>↓</kbd> 목록 훑기</li>
+      <li><kbd>Space</kbd> 듣기 · 멈추기</li>
+      <li><kbd>1</kbd>–<kbd>5</kbd> 별점</li>
+      <li><kbd>S</kbd> DAW로 보내기</li>
+      <li><kbd>L</kbd> 레이어 레시피</li>
+      <li><kbd>?</kbd> 단축키 전체 보기</li>
+    </ul>
+  </section>
+
+  <section class="dl wrap" id="download">
+    <div class="dl-grid">
+      <div>
+        <span class="tag">Download</span>
+        <h2>SoundLib 1.0.0</h2>
+        <p style="color:var(--dim);margin:0">Apple Silicon(M1 이상) Mac 용입니다.</p>
+        <dl class="spec">
+          <dt>파일</dt><dd>SoundLib-1.0.0-arm64.dmg</dd>
+          <dt>크기</dt><dd>약 128 MB</dd>
+          <dt>지원</dt><dd>macOS · Apple Silicon (arm64)</dd>
+          <dt>포맷</dt><dd>WAV · AIFF · MP3 · FLAC · OGG · M4A · Opus</dd>
+        </dl>
+        <a class="btn btn-primary" id="dlBtn" href="#download"><span class="led"></span><span id="dlLabel">DMG 받기</span></a>
+      </div>
+      <div>
+        <ol class="steps">
+          <li><div>받은 <b>DMG</b>를 열고 <b>SoundLib</b>을 <b>응용 프로그램</b> 폴더로 끌어다 놓습니다.</div></li>
+          <li><div>처음 한 번은 앱을 <b>우클릭 → 열기</b>로 엽니다. 이후로는 그냥 열립니다.</div></li>
+          <li><div><b>폴더 스캔</b>으로 효과음 폴더를 고르면 목록이 만들어집니다. 파일은 옮기지 않습니다.</div></li>
+        </ol>
+        <p class="note">아직 Apple 공증을 받지 않은 빌드라, 처음 열 때 macOS 가 “확인되지 않은 개발자” 경고를 띄웁니다. 우클릭 → 열기로 한 번 허용하면 됩니다.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>SoundLib 1.0.0 — 내 컴퓨터의 효과음을 위한 라이브러리</span>
+    <span>화면의 효과음은 모두 데모용 합성음입니다</span>
+  </div>
+</footer>
+
+<script>
+  // 배포 링크. DMG 를 올린 주소(예: GitHub Releases)를 여기에 넣으면 버튼이 켜진다.
+  const DOWNLOAD_URL = 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-1.0.0-arm64.dmg'
+  const btn = document.getElementById('dlBtn')
+  if (DOWNLOAD_URL) {
+    btn.href = DOWNLOAD_URL
+  } else {
+    btn.setAttribute('aria-disabled', 'true')
+    btn.removeAttribute('href')
+    document.getElementById('dlLabel').textContent = '배포 링크 준비 중'
+  }
+</script>
+</body>
+</html>
