@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="SoundLib — 내 컴퓨터의 효과음 폴더를 색인해 찾고, 듣고, 재고, REAPER로 바로 보내는 macOS 앱.">
+<meta name="description" content="SoundLib — 내 컴퓨터의 효과음 폴더를 색인해 찾고, 듣고, 재고, REAPER로 바로 보내는 macOS/Windows 앱. 7일 무료 체험.">
 <meta property="og:title" content="SoundLib">
 <meta property="og:description" content="수십만 개의 효과음에서 그 소리를 찾아 바로 DAW로.">
 <meta property="og:image" content="https://fiox94.github.io/soundlib/hero.jpg">
@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" href="icon.png">
 <title>SoundLib</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans+KR:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
 <style>
   /* SoundLib 의 Patch Bay 세계를 그대로 가져온다 — 앱과 같은 새시 팔레트,
      같은 패치 케이블 파랑. 하드웨어 세계라 일부러 어두운 한 벌만 쓴다. */
@@ -31,8 +31,8 @@
     --line2: rgba(255,246,230,0.15);
     --groove-in: inset 0 1px 1px rgba(0,0,0,0.55), inset 0 -1px 0 rgba(255,246,230,0.05);
     --groove-out: inset 0 1px 0 rgba(255,246,230,0.09), inset 0 -1px 1px rgba(0,0,0,0.5);
-    --display: 'Barlow Condensed', 'DIN Condensed', 'Noto Sans KR', sans-serif;
-    --body: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    --display: 'Barlow Condensed', 'DIN Condensed', 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans SC', sans-serif;
+    --body: 'Noto Sans KR', 'Noto Sans JP', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
     color-scheme: dark;
   }
   * { box-sizing: border-box; }
@@ -53,15 +53,24 @@
   .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
     background: rgba(36,34,32,0.92); backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line); box-shadow: var(--groove-out); }
-  .bar .wrap { display: flex; align-items: center; gap: 24px; height: 56px; }
-  .mark { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); }
+  .bar .wrap { display: flex; align-items: center; gap: 18px; height: 56px; }
+  .mark { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text); flex-shrink: 0; }
   .mark img { width: 30px; height: 30px; }
   .mark b { font-family: var(--display); font-weight: 700; font-size: 20px; letter-spacing: 0.16em; }
   .mark b span { color: var(--cable); }
-  .bar nav { display: flex; gap: 22px; margin-left: auto; }
-  .bar nav a { color: var(--dim); text-decoration: none; font-size: 14px; }
+  .bar nav { display: flex; gap: 20px; margin-left: auto; }
+  .bar nav a { color: var(--dim); text-decoration: none; font-size: 14px; white-space: nowrap; }
   .bar nav a:hover { color: var(--text); }
-  @media (max-width: 720px) { .bar nav { display: none; } }
+  @media (max-width: 860px) { .bar nav { display: none; } }
+
+  /* 언어 선택 — 새시에 박힌 로터리 셀렉터처럼. */
+  .langsel { position: relative; flex-shrink: 0; }
+  .langsel select { appearance: none; font: 600 12px/1 var(--body); letter-spacing: 0.06em;
+    color: var(--dim); background: var(--well); box-shadow: var(--groove-in); border: 1px solid var(--line2);
+    border-radius: 6px; padding: 7px 26px 7px 10px; cursor: pointer; }
+  .langsel select:hover { color: var(--text); border-color: rgba(255,246,230,0.3); }
+  .langsel::after { content: '\25BE'; position: absolute; right: 9px; top: 50%; transform: translateY(-50%);
+    font-size: 9px; color: var(--dim); pointer-events: none; }
 
   .btn { display: inline-flex; align-items: center; gap: 9px; font: 600 15px/1 var(--body);
     padding: 13px 20px; border-radius: 8px; text-decoration: none; cursor: pointer; border: 0; }
@@ -82,7 +91,7 @@
     font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
     padding: 5px 12px; border-radius: 6px; background: var(--well); box-shadow: var(--groove-in); }
   .eyebrow-plate i { width: 6px; height: 6px; border-radius: 50%; background: var(--cable); box-shadow: 0 0 8px var(--cable); }
-  h1 { font-weight: 900; font-size: clamp(36px, 5.6vw, 64px); line-height: 1.15; letter-spacing: -0.02em;
+  h1 { font-weight: 900; font-size: clamp(32px, 5.2vw, 60px); line-height: 1.18; letter-spacing: -0.02em;
     margin: 20px 0 18px; text-wrap: balance; }
   h1 em { font-style: normal; color: var(--cable); }
   .lede { font-size: clamp(16px, 1.7vw, 19px); color: var(--dim); max-width: 38em; margin: 0 0 30px; }
@@ -110,6 +119,13 @@
   .facts p { margin: 0; color: var(--dim); font-size: 14px; line-height: 1.6; }
   @media (max-width: 760px) { .facts { grid-template-columns: 1fr; } }
 
+  /* 가격 배지 — 체험/구매를 한눈에. */
+  .pricebar { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; margin: 18px 0 0;
+    font-size: 13.5px; color: var(--dim); }
+  .pricebar b { color: var(--text); }
+  .pricebar .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cable); box-shadow: 0 0 6px var(--cable); flex-shrink: 0; }
+  .pricebar span { display: inline-flex; align-items: center; gap: 7px; }
+
   /* 기능 — 제목은 왼쪽, 설명은 오른쪽, 화면은 그 아래 전폭. 목록 화면은
      가로로 길어서 옆 칸에 두면 글자가 안 읽힌다. */
   .features { padding-block: 40px; }
@@ -125,7 +141,7 @@
     .copy > * { grid-column: 1 !important; grid-row: auto !important; }
   }
   .tag { font-family: var(--display); font-weight: 600; font-size: 14px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--cable); }
-  .feature h2 { font-size: clamp(24px, 3vw, 34px); line-height: 1.3; font-weight: 800; margin: 8px 0 14px; letter-spacing: -0.01em; text-wrap: balance; }
+  .feature h2 { font-size: clamp(22px, 2.8vw, 32px); line-height: 1.3; font-weight: 800; margin: 8px 0 14px; letter-spacing: -0.01em; text-wrap: balance; }
   .feature p { color: var(--dim); margin: 0 0 14px; max-width: 34em; }
   .feature ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
   .feature li { color: var(--text); font-size: 15px; padding-left: 18px; position: relative; }
@@ -157,14 +173,22 @@
   .keys li { display: flex; align-items: center; gap: 12px; color: var(--dim); font-size: 14px; padding: 8px 0; border-bottom: 1px solid var(--line); }
   .keys kbd { min-width: 34px; text-align: center; }
 
-  /* 다운로드 */
+  /* 다운로드 · 구매 */
   .dl { margin: 72px 0 0; padding: 48px 0 64px; border-top: 1px solid var(--line); }
   .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
   @media (max-width: 860px) { .dl-grid { grid-template-columns: 1fr; gap: 32px; } }
-  .dl h2 { font-size: clamp(28px, 3.6vw, 42px); font-weight: 900; margin: 8px 0 14px; letter-spacing: -0.02em; }
+  .dl h2 { font-size: clamp(26px, 3.4vw, 40px); font-weight: 900; margin: 8px 0 14px; letter-spacing: -0.02em; }
+  .platform-tabs { display: flex; gap: 8px; margin: 0 0 20px; }
+  .ptab { font: 600 13px/1 var(--body); padding: 9px 14px; border-radius: 7px; background: var(--well);
+    box-shadow: var(--groove-in); border: 1px solid var(--line2); color: var(--dim); cursor: pointer; }
+  .ptab.on { color: var(--text); box-shadow: var(--groove-in), 0 0 0 1px var(--cable); }
   .spec { display: grid; grid-template-columns: auto 1fr; gap: 8px 22px; margin: 22px 0 26px; font-size: 14px; }
   .spec dt { color: var(--faint); }
   .spec dd { margin: 0; color: var(--text); }
+  .buy-row { display: flex; flex-wrap: wrap; gap: 10px; }
+  .price-tag { display: inline-flex; align-items: baseline; gap: 4px; margin-left: 2px; }
+  .price-tag b { font-size: 15px; }
+  .price-tag small { color: rgba(255,255,255,0.75); font-size: 11px; }
   .steps { counter-reset: s; list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
   .steps li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 12px; color: var(--dim); }
   .steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
@@ -175,20 +199,30 @@
 
   footer { border-top: 1px solid var(--line); padding-block: 26px 40px; color: var(--faint); font-size: 13px; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+  [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 
 <header class="bar">
   <div class="wrap">
-    <a class="mark" href="#top" aria-label="SoundLib 처음으로"><img src="icon.png" alt=""><b>SOUND<span>LIB</span></b></a>
-    <nav aria-label="페이지 안내">
-      <a href="#find">찾기</a>
-      <a href="#measure">재기</a>
-      <a href="#recipe">레이어 레시피</a>
-      <a href="#download">다운로드</a>
+    <a class="mark" href="#top" aria-label="SoundLib"><img src="icon.png" alt=""><b>SOUND<span>LIB</span></b></a>
+    <nav aria-label="nav">
+      <a href="#find" data-i18n="nav_find">찾기</a>
+      <a href="#measure" data-i18n="nav_measure">재기</a>
+      <a href="#recipe" data-i18n="nav_recipe">레이어 레시피</a>
+      <a href="#download" data-i18n="nav_download">다운로드</a>
     </nav>
-    <a class="btn btn-primary" href="#download"><span class="led"></span>다운로드</a>
+    <div class="langsel">
+      <select id="langPick" aria-label="Language">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+        <option value="ja">日本語</option>
+        <option value="zh">简体中文</option>
+      </select>
+    </div>
+    <a class="btn btn-primary" href="#download"><span class="led"></span><span data-i18n="nav_download">다운로드</span></a>
   </div>
 </header>
 
@@ -196,101 +230,102 @@
   <section class="hero wrap">
     <div class="hero-top">
       <div>
-        <span class="eyebrow-plate"><i></i>macOS · 효과음 라이브러리 관리</span>
-        <h1>수십만 개의 효과음에서<br><em>그 소리</em>를 찾아 바로 DAW로.</h1>
-        <p class="lede">
-          SoundLib은 <b>내 컴퓨터에 있는 효과음 폴더</b>를 색인해서 찾고, 듣고, 재고, 고른 소리를
-          <b>REAPER에 바로 꽂아 넣는</b> 데스크톱 앱입니다. 클라우드도, 계정도, 구독도 없습니다.
-        </p>
+        <span class="eyebrow-plate"><i></i><span data-i18n="eyebrow">macOS · Windows · 효과음 라이브러리 관리</span></span>
+        <h1 data-i18n-html="h1"></h1>
+        <p class="lede" data-i18n-html="lede"></p>
         <div class="cta">
-          <a class="btn btn-primary" href="#download"><span class="led"></span>macOS용 받기</a>
-          <a class="btn btn-ghost" href="#find">무엇을 하는지 보기</a>
-          <small>v1.0.0 · Apple Silicon</small>
+          <a class="btn btn-primary" href="#download"><span class="led"></span><span data-i18n="cta_trial">7일 무료로 체험하기</span></a>
+          <a class="btn btn-ghost" href="#find" data-i18n="cta_learn">무엇을 하는지 보기</a>
+          <small data-i18n="cta_meta">v1.0.0 · macOS · Windows</small>
         </div>
+        <p class="pricebar">
+          <span><i class="dot"></i><b data-i18n="price_trial_b">7일 무료 체험</b> <span data-i18n="price_trial_p">— 카드 등록 없이 전체 기능</span></span>
+          <span><i class="dot"></i><b data-i18n="price_buy_b">이후 $179</b> <span data-i18n="price_buy_p">평생 라이선스, 한 번만 결제</span></span>
+        </p>
       </div>
-      <img class="jack" src="icon.png" alt="SoundLib 앱 아이콘 — 파랗게 켜진 잭 소켓">
+      <img class="jack" src="icon.png" alt="SoundLib app icon">
     </div>
 
     <figure class="screen">
-      <img src="hero.jpg" width="1800" height="1125" alt="SoundLib 메인 화면. 왼쪽 라이브러리 트리, 가운데 파형 썸네일과 태그·라우드니스가 붙은 파일 목록, 아래에 선택한 칼 휘두르는 소리의 큰 파형.">
-      <figcaption>스크린샷은 데모용으로 합성한 효과음 40개로 찍었습니다.</figcaption>
+      <img src="hero.jpg" width="1800" height="1125" data-i18n-attr="alt:hero_alt" alt="">
+      <figcaption data-i18n="hero_caption">스크린샷은 데모용으로 합성한 효과음 40개로 찍었습니다.</figcaption>
     </figure>
 
     <div class="facts">
-      <div><h3>내 컴퓨터에서만</h3><p>색인·별점·태그·메모가 전부 이 기계 안에 남습니다. 인터넷이 없어도 그대로 동작합니다.</p></div>
-      <div><h3>원본은 건드리지 않음</h3><p>스캔은 목록만 만듭니다. 파일을 옮기거나 다시 쓰지 않습니다 — 이름 바꾸기처럼 직접 시킨 일만 빼고요.</p></div>
-      <div><h3>키보드로 전부</h3><p>↑↓로 훑고, 스페이스로 듣고, 숫자로 별점을 매기고, S로 보냅니다. 손을 마우스로 옮기지 않아도 됩니다.</p></div>
+      <div><h3 data-i18n="fact1_h">내 컴퓨터에서만</h3><p data-i18n="fact1_p">색인·별점·태그·메모가 전부 이 기계 안에 남습니다. 인터넷이 없어도 그대로 동작합니다.</p></div>
+      <div><h3 data-i18n="fact2_h">원본은 건드리지 않음</h3><p data-i18n="fact2_p">스캔은 목록만 만듭니다. 파일을 옮기거나 다시 쓰지 않습니다 — 이름 바꾸기처럼 직접 시킨 일만 빼고요.</p></div>
+      <div><h3 data-i18n="fact3_h">키보드로 전부</h3><p data-i18n="fact3_p">↑↓로 훑고, 스페이스로 듣고, 숫자로 별점을 매기고, S로 보냅니다. 손을 마우스로 옮기지 않아도 됩니다.</p></div>
     </div>
   </section>
 
-  <section class="features wrap" aria-label="기능">
+  <section class="features wrap" aria-label="features">
     <article class="feature" id="find">
       <div class="copy">
         <span class="tag">Find</span>
-        <h2>파일 이름에 없는 단어로도 찾습니다</h2>
-        <p><code>clang</code> 이라는 이름의 파일은 하나도 없지만, 모루 타격·칼날 울림·검 부딪힘이 나옵니다. 영어 동의어 사전과 오타 교정, 그리고 라이브러리 안에서 스스로 배운 연관어로 검색을 넓힙니다.</p>
+        <h2 data-i18n="f1_h">파일 이름에 없는 단어로도 찾습니다</h2>
+        <p data-i18n-html="f1_p"></p>
         <ul>
-          <li><code>whoosh -light</code> — 빼고 싶은 말은 앞에 빼기</li>
-          <li><code>"metal hit"</code> — 붙어 있는 구문만</li>
-          <li><code>길이&lt;2</code> <code>bpm&gt;120</code> <code>채널=1</code> — 숫자 조건도 검색창에서</li>
-          <li>UCS 카테고리로 자동 분류, 탭마다 다른 검색</li>
+          <li data-i18n-html="f1_li1"></li>
+          <li data-i18n-html="f1_li2"></li>
+          <li data-i18n-html="f1_li3"></li>
+          <li data-i18n="f1_li4">UCS 카테고리로 자동 분류, 탭마다 다른 검색</li>
         </ul>
       </div>
-      <figure class="shot"><img src="search.jpg" width="1600" height="255" loading="lazy" alt="검색창에 clang 을 입력한 결과. 모루 타격 3개, 칼날 울림 1개, 검 부딪힘 2개가 나왔다."></figure>
+      <figure class="shot"><img src="search.jpg" width="1600" height="255" loading="lazy" data-i18n-attr="alt:f1_alt" alt=""></figure>
     </article>
 
     <article class="feature">
       <div class="copy">
         <span class="tag">Similar</span>
-        <h2>하나를 고르면, 비슷한 소리 순서로</h2>
-        <p>모든 파일에 소리 지문을 남겨 둡니다. 하나를 고르고 <b>비슷한 소리 찾기</b>를 누르면 이름이 달라도, 다른 팩에 들어 있어도 소리가 가까운 순서로 줄을 세웁니다. 유사도는 퍼센트로 같이 보여줍니다.</p>
+        <h2 data-i18n="f2_h">하나를 고르면, 비슷한 소리 순서로</h2>
+        <p data-i18n-html="f2_p"></p>
         <ul>
-          <li>“이것보다 조금 더 무거운 것” 을 이름 없이 찾기</li>
-          <li>여러 팩에 흩어진 같은 계열 소리 한눈에 보기</li>
+          <li data-i18n="f2_li1">"이것보다 조금 더 무거운 것"을 이름 없이 찾기</li>
+          <li data-i18n="f2_li2">여러 팩에 흩어진 같은 계열 소리 한눈에 보기</li>
         </ul>
       </div>
-      <figure class="shot"><img src="similar.jpg" width="1600" height="455" loading="lazy" alt="Air Pass Wide Slow 와 비슷한 소리 결과. 유사 100%, 97%, 84% 순서로 공기 가르는 소리와 검 휘두르는 소리가 위에 온다."></figure>
+      <figure class="shot"><img src="similar.jpg" width="1600" height="455" loading="lazy" data-i18n-attr="alt:f2_alt" alt=""></figure>
     </article>
 
     <article class="feature" id="measure">
       <div class="copy">
         <span class="tag">Measure</span>
-        <h2>들어서는 모르는 것을 숫자로</h2>
-        <p>라이브러리를 한 번 분석해 두면 목록에서 바로 보입니다. 라우드니스로 줄을 세우고, 파일마다 무엇이 재어졌고 무엇이 추정인지 구분해서 보여줍니다.</p>
+        <h2 data-i18n="f3_h">들어서는 모르는 것을 숫자로</h2>
+        <p data-i18n="f3_p">라이브러리를 한 번 분석해 두면 목록에서 바로 보입니다. 라우드니스로 줄을 세우고, 파일마다 무엇이 재어졌고 무엇이 추정인지 구분해서 보여줍니다.</p>
         <ul>
-          <li>EBU R128 라우드니스(LUFS) · 샘플 피크 · 클리핑 구간</li>
-          <li>스테레오 상관도 — 위상이 뒤집힌 파일을 미리</li>
-          <li>네 개의 성격 축: 무게 · 금속성 · 우쉬 · 날카로움</li>
-          <li>BWF · iXML 메타데이터 읽기와 쓰기</li>
+          <li data-i18n="f3_li1">EBU R128 라우드니스(LUFS) · 샘플 피크 · 클리핑 구간</li>
+          <li data-i18n="f3_li2">스테레오 상관도 — 위상이 뒤집힌 파일을 미리</li>
+          <li data-i18n="f3_li3">네 개의 성격 축: 무게 · 금속성 · 우쉬 · 날카로움</li>
+          <li data-i18n="f3_li4">BWF · iXML 메타데이터 읽기와 쓰기</li>
         </ul>
       </div>
-      <figure class="shot"><img src="measure.jpg" width="1200" height="205" loading="lazy" alt="검 부딪힘 소리의 측정값: -15.1 LUFS, 피크 -0.2 dBFS, 무게 40%, 금속성 62%, 우쉬 0%, 날카로움 63%."></figure>
+      <figure class="shot"><img src="measure.jpg" width="1200" height="205" loading="lazy" data-i18n-attr="alt:f3_alt" alt=""></figure>
     </article>
 
     <article class="feature" id="recipe">
       <div class="copy">
         <span class="tag">Layer Recipe</span>
-        <h2>내가 레이어를 쌓는 방식을, 레시피로</h2>
-        <p>내 REAPER 프로젝트를 읽어서 “무거운 칼 휘두르기 = 금속 우쉬 + 공기 + 울림 꼬리” 처럼 소리를 겹친 자리를 찾아냅니다. 겹 사이의 시간차와 음량차는 그대로 두고, 재료만 라이브러리의 비슷한 소리로 바꿔 변주를 만듭니다.</p>
+        <h2 data-i18n="f4_h">내가 레이어를 쌓는 방식을, 레시피로</h2>
+        <p data-i18n-html="f4_p"></p>
         <ul>
-          <li>← → 로 변주를 넘기며 바로 들어보기</li>
-          <li>마음에 드는 조합을 트랙별로 REAPER에 보내기</li>
+          <li data-i18n-html="f4_li1"></li>
+          <li data-i18n="f4_li2">마음에 드는 조합을 트랙별로 REAPER에 보내기</li>
         </ul>
       </div>
-      <figure class="shot narrow"><img src="recipe.jpg" width="1240" height="505" loading="lazy" alt="레이어 레시피 창. '대검 휘두르기 — 무겁게' 레시피의 변주 3/19: 바디, 공기, 꼬리 세 겹과 각각의 시간차, 음량차, 파일 이름."></figure>
+      <figure class="shot narrow"><img src="recipe.jpg" width="1240" height="505" loading="lazy" data-i18n-attr="alt:f4_alt" alt=""></figure>
     </article>
 
     <article class="feature">
       <div class="copy">
         <span class="tag">Clean Up</span>
-        <h2>여러 폴더에 흩어진 같은 파일을 정리</h2>
-        <p>이름과 크기가 같은 파일은 확실한 중복으로, 소리만 비슷한 것은 따로 표시해 사람이 고르게 합니다. 별점·태그·메모를 붙여 둔 쪽을 남기고, 지우는 대신 <b>휴지통으로</b> 보내서 되돌릴 수 있습니다.</p>
+        <h2 data-i18n="f5_h">여러 폴더에 흩어진 같은 파일을 정리</h2>
+        <p data-i18n-html="f5_p"></p>
         <ul>
-          <li>몇 개, 얼마만큼 비워지는지 누르기 전에 보여주기</li>
-          <li>켤 때 하루 한 번 자동 백업(최근 7벌) · 이름 바꾸기 되돌리기</li>
+          <li data-i18n="f5_li1">몇 개, 얼마만큼 비워지는지 누르기 전에 보여주기</li>
+          <li data-i18n="f5_li2">켤 때 하루 한 번 자동 백업(최근 7벌) · 이름 바꾸기 되돌리기</li>
         </ul>
       </div>
-      <figure class="shot narrow"><img src="dedupe.jpg" width="1240" height="893" loading="lazy" alt="중복 정리 창. 이름·크기가 같은 무리 2개는 체크되어 있고, 소리로 판단한 무리 2개는 체크가 비어 있다. 각 무리에서 남길 파일과 지울 파일이 표시된다."></figure>
+      <figure class="shot narrow"><img src="dedupe.jpg" width="1240" height="893" loading="lazy" data-i18n-attr="alt:f5_alt" alt=""></figure>
     </article>
   </section>
 
@@ -298,19 +333,19 @@
     <div class="send">
       <div class="keycap" aria-hidden="true">S</div>
       <div>
-        <h2>S 한 번이면 DAW 편집 커서로</h2>
-        <p>고른 소리를 REAPER의 편집 커서 자리에 바로 넣습니다. 파형에서 구간을 잡아 두면 그 구간만 갑니다. 끌어다 놓아도 되고, 안 되는 환경에서는 클립보드로 넘깁니다 — 조용히 실패하지 않습니다.</p>
-        <div class="daws"><span class="on">REAPER</span><span>Pro Tools</span><span>그 밖의 DAW 5종</span><span>클립보드</span></div>
+        <h2 data-i18n="send_h">S 한 번이면 DAW 편집 커서로</h2>
+        <p data-i18n="send_p">고른 소리를 REAPER의 편집 커서 자리에 바로 넣습니다. 파형에서 구간을 잡아 두면 그 구간만 갑니다. 끌어다 놓아도 되고, 안 되는 환경에서는 클립보드로 넘깁니다 — 조용히 실패하지 않습니다.</p>
+        <div class="daws"><span class="on">REAPER</span><span>Pro Tools</span><span data-i18n="daws_other">그 밖의 DAW 5종</span><span data-i18n="daws_clip">클립보드</span></div>
       </div>
     </div>
 
-    <ul class="keys" aria-label="자주 쓰는 단축키">
-      <li><kbd>↑</kbd><kbd>↓</kbd> 목록 훑기</li>
-      <li><kbd>Space</kbd> 듣기 · 멈추기</li>
-      <li><kbd>1</kbd>–<kbd>5</kbd> 별점</li>
-      <li><kbd>S</kbd> DAW로 보내기</li>
-      <li><kbd>L</kbd> 레이어 레시피</li>
-      <li><kbd>?</kbd> 단축키 전체 보기</li>
+    <ul class="keys" aria-label="shortcuts">
+      <li><kbd>↑</kbd><kbd>↓</kbd> <span data-i18n="key1">목록 훑기</span></li>
+      <li><kbd>Space</kbd> <span data-i18n="key2">듣기 · 멈추기</span></li>
+      <li><kbd>1</kbd>–<kbd>5</kbd> <span data-i18n="key3">별점</span></li>
+      <li><kbd>S</kbd> <span data-i18n="key4">DAW로 보내기</span></li>
+      <li><kbd>L</kbd> <span data-i18n="key5">레이어 레시피</span></li>
+      <li><kbd>?</kbd> <span data-i18n="key6">단축키 전체 보기</span></li>
     </ul>
   </section>
 
@@ -319,22 +354,38 @@
       <div>
         <span class="tag">Download</span>
         <h2>SoundLib 1.0.0</h2>
-        <p style="color:var(--dim);margin:0">Apple Silicon(M1 이상) Mac 용입니다.</p>
-        <dl class="spec">
-          <dt>파일</dt><dd>SoundLib-1.0.0-arm64.dmg</dd>
-          <dt>크기</dt><dd>약 128 MB</dd>
-          <dt>지원</dt><dd>macOS · Apple Silicon (arm64)</dd>
-          <dt>포맷</dt><dd>WAV · AIFF · MP3 · FLAC · OGG · M4A · Opus</dd>
+        <p style="color:var(--dim);margin:0 0 18px" data-i18n="dl_sub">7일 무료 체험 후 평생 라이선스 $179. macOS와 Windows에서 씁니다.</p>
+
+        <div class="platform-tabs" role="tablist" aria-label="platform">
+          <button class="ptab on" id="tabMac" data-i18n="tab_mac">macOS</button>
+          <button class="ptab" id="tabWin" data-i18n="tab_win">Windows</button>
+        </div>
+
+        <dl class="spec" id="specMac">
+          <dt data-i18n="spec_file">파일</dt><dd>SoundLib-1.0.0-arm64.dmg</dd>
+          <dt data-i18n="spec_size">크기</dt><dd>~128 MB</dd>
+          <dt data-i18n="spec_support">지원</dt><dd>macOS · Apple Silicon (arm64)</dd>
+          <dt data-i18n="spec_format">포맷</dt><dd>WAV · AIFF · MP3 · FLAC · OGG · M4A · Opus</dd>
         </dl>
-        <a class="btn btn-primary" id="dlBtn" href="#download"><span class="led"></span><span id="dlLabel">DMG 받기</span></a>
+        <dl class="spec" id="specWin" hidden>
+          <dt data-i18n="spec_file">파일</dt><dd>SoundLib-Setup-1.0.0.exe</dd>
+          <dt data-i18n="spec_size">크기</dt><dd>~110 MB</dd>
+          <dt data-i18n="spec_support">지원</dt><dd>Windows 10/11 · 64bit</dd>
+          <dt data-i18n="spec_format">포맷</dt><dd>WAV · AIFF · MP3 · FLAC · OGG · M4A · Opus</dd>
+        </dl>
+
+        <div class="buy-row">
+          <a class="btn btn-primary" id="dlBtn" href="#download"><span class="led"></span><span id="dlLabel" data-i18n="dl_trial_btn">무료 체험 받기</span></a>
+          <a class="btn btn-ghost" id="buyBtn" href="#download"><span data-i18n="dl_buy_btn">지금 구매</span> <span class="price-tag"><b>$179</b> <small data-i18n="dl_buy_note">평생 1회</small></span></a>
+        </div>
       </div>
       <div>
         <ol class="steps">
-          <li><div>받은 <b>DMG</b>를 열고 <b>SoundLib</b>을 <b>응용 프로그램</b> 폴더로 끌어다 놓습니다.</div></li>
-          <li><div>처음 한 번은 앱을 <b>우클릭 → 열기</b>로 엽니다. 이후로는 그냥 열립니다.</div></li>
-          <li><div><b>폴더 스캔</b>으로 효과음 폴더를 고르면 목록이 만들어집니다. 파일은 옮기지 않습니다.</div></li>
+          <li><div data-i18n-html="step1"></div></li>
+          <li><div data-i18n-html="step2"></div></li>
+          <li><div data-i18n-html="step3"></div></li>
         </ol>
-        <p class="note">아직 Apple 공증을 받지 않은 빌드라, 처음 열 때 macOS 가 “확인되지 않은 개발자” 경고를 띄웁니다. 우클릭 → 열기로 한 번 허용하면 됩니다.</p>
+        <p class="note" data-i18n="note_notarize" id="notarizeNote">아직 Apple 공증을 받지 않은 빌드라, 처음 열 때 macOS가 "확인되지 않은 개발자" 경고를 띄웁니다. 우클릭 → 열기로 한 번 허용하면 됩니다.</p>
       </div>
     </div>
   </section>
@@ -342,22 +393,298 @@
 
 <footer>
   <div class="wrap">
-    <span>SoundLib 1.0.0 — 내 컴퓨터의 효과음을 위한 라이브러리</span>
-    <span>화면의 효과음은 모두 데모용 합성음입니다</span>
+    <span data-i18n="footer1">SoundLib 1.0.0 — 내 컴퓨터의 효과음을 위한 라이브러리</span>
+    <span data-i18n="footer2">화면의 효과음은 모두 데모용 합성음입니다</span>
   </div>
 </footer>
 
 <script>
-  // 배포 링크. DMG 를 올린 주소(예: GitHub Releases)를 여기에 넣으면 버튼이 켜진다.
-  const DOWNLOAD_URL = 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-1.0.0-arm64.dmg'
+// ── 배포 링크. 자리표만 채우면 버튼이 켜진다 ─────────────────────────────
+const LINKS = {
+  mac: 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-1.0.0-arm64.dmg',
+  win: '', // Windows 설치 파일(.exe) 주소 — 빌드 후 채운다
+  buy: '', // Gumroad 상품 결제 링크 — 상품을 만들면 채운다 (예: https://fiox94.gumroad.com/l/soundlib)
+}
+
+// ── 다국어 ───────────────────────────────────────────────────────────────
+const I18N = {
+  ko: {
+    nav_find: '찾기', nav_measure: '재기', nav_recipe: '레이어 레시피', nav_download: '다운로드',
+    eyebrow: 'macOS · Windows · 효과음 라이브러리 관리',
+    h1: '수십만 개의 효과음에서<br><em>그 소리</em>를 찾아 바로 DAW로.',
+    lede: 'SoundLib은 <b>내 컴퓨터에 있는 효과음 폴더</b>를 색인해서 찾고, 듣고, 재고, 고른 소리를 <b>REAPER에 바로 꽂아 넣는</b> 데스크톱 앱입니다. 클라우드도, 계정도, 구독도 없습니다.',
+    cta_trial: '7일 무료로 체험하기', cta_learn: '무엇을 하는지 보기', cta_meta: 'v1.0.0 · macOS · Windows',
+    price_trial_b: '7일 무료 체험', price_trial_p: '— 카드 등록 없이 전체 기능',
+    price_buy_b: '이후 $179', price_buy_p: '평생 라이선스, 한 번만 결제',
+    hero_alt: 'SoundLib 메인 화면. 왼쪽 라이브러리 트리, 가운데 파형 썸네일과 태그·라우드니스가 붙은 파일 목록, 아래에 선택한 칼 휘두르는 소리의 큰 파형.',
+    hero_caption: '스크린샷은 데모용으로 합성한 효과음 40개로 찍었습니다.',
+    fact1_h: '내 컴퓨터에서만', fact1_p: '색인·별점·태그·메모가 전부 이 기계 안에 남습니다. 인터넷이 없어도 그대로 동작합니다.',
+    fact2_h: '원본은 건드리지 않음', fact2_p: '스캔은 목록만 만듭니다. 파일을 옮기거나 다시 쓰지 않습니다 — 이름 바꾸기처럼 직접 시킨 일만 빼고요.',
+    fact3_h: '키보드로 전부', fact3_p: '↑↓로 훑고, 스페이스로 듣고, 숫자로 별점을 매기고, S로 보냅니다. 손을 마우스로 옮기지 않아도 됩니다.',
+    f1_h: '파일 이름에 없는 단어로도 찾습니다',
+    f1_p: '<code>clang</code> 이라는 이름의 파일은 하나도 없지만, 모루 타격·칼날 울림·검 부딪힘이 나옵니다. 영어 동의어 사전과 오타 교정, 그리고 라이브러리 안에서 스스로 배운 연관어로 검색을 넓힙니다.',
+    f1_li1: '<code>whoosh -light</code> — 빼고 싶은 말은 앞에 빼기',
+    f1_li2: '<code>"metal hit"</code> — 붙어 있는 구문만',
+    f1_li3: '<code>길이&lt;2</code> <code>bpm&gt;120</code> <code>채널=1</code> — 숫자 조건도 검색창에서',
+    f1_li4: 'UCS 카테고리로 자동 분류, 탭마다 다른 검색',
+    f1_alt: '검색창에 clang 을 입력한 결과. 모루 타격 3개, 칼날 울림 1개, 검 부딪힘 2개가 나왔다.',
+    f2_h: '하나를 고르면, 비슷한 소리 순서로',
+    f2_p: '모든 파일에 소리 지문을 남겨 둡니다. 하나를 고르고 <b>비슷한 소리 찾기</b>를 누르면 이름이 달라도, 다른 팩에 들어 있어도 소리가 가까운 순서로 줄을 세웁니다. 유사도는 퍼센트로 같이 보여줍니다.',
+    f2_li1: '"이것보다 조금 더 무거운 것"을 이름 없이 찾기', f2_li2: '여러 팩에 흩어진 같은 계열 소리 한눈에 보기',
+    f2_alt: 'Air Pass Wide Slow 와 비슷한 소리 결과. 유사 100%, 97%, 84% 순서로 공기 가르는 소리와 검 휘두르는 소리가 위에 온다.',
+    f3_h: '들어서는 모르는 것을 숫자로',
+    f3_p: '라이브러리를 한 번 분석해 두면 목록에서 바로 보입니다. 라우드니스로 줄을 세우고, 파일마다 무엇이 재어졌고 무엇이 추정인지 구분해서 보여줍니다.',
+    f3_li1: 'EBU R128 라우드니스(LUFS) · 샘플 피크 · 클리핑 구간', f3_li2: '스테레오 상관도 — 위상이 뒤집힌 파일을 미리',
+    f3_li3: '네 개의 성격 축: 무게 · 금속성 · 우쉬 · 날카로움', f3_li4: 'BWF · iXML 메타데이터 읽기와 쓰기',
+    f3_alt: '검 부딪힘 소리의 측정값: -15.1 LUFS, 피크 -0.2 dBFS, 무게 40%, 금속성 62%, 우쉬 0%, 날카로움 63%.',
+    f4_h: '내가 레이어를 쌓는 방식을, 레시피로',
+    f4_p: '내 REAPER 프로젝트를 읽어서 "무거운 칼 휘두르기 = 금속 우쉬 + 공기 + 울림 꼬리" 처럼 소리를 겹친 자리를 찾아냅니다. 겹 사이의 시간차와 음량차는 그대로 두고, 재료만 라이브러리의 비슷한 소리로 바꿔 변주를 만듭니다.',
+    f4_li1: '← → 로 변주를 넘기며 바로 들어보기', f4_li2: '마음에 드는 조합을 트랙별로 REAPER에 보내기',
+    f4_alt: "레이어 레시피 창. '대검 휘두르기 — 무겁게' 레시피의 변주 3/19: 바디, 공기, 꼬리 세 겹과 각각의 시간차, 음량차, 파일 이름.",
+    f5_h: '여러 폴더에 흩어진 같은 파일을 정리',
+    f5_p: '이름과 크기가 같은 파일은 확실한 중복으로, 소리만 비슷한 것은 따로 표시해 사람이 고르게 합니다. 별점·태그·메모를 붙여 둔 쪽을 남기고, 지우는 대신 <b>휴지통으로</b> 보내서 되돌릴 수 있습니다.',
+    f5_li1: '몇 개, 얼마만큼 비워지는지 누르기 전에 보여주기', f5_li2: '켤 때 하루 한 번 자동 백업(최근 7벌) · 이름 바꾸기 되돌리기',
+    f5_alt: '중복 정리 창. 이름·크기가 같은 무리 2개는 체크되어 있고, 소리로 판단한 무리 2개는 체크가 비어 있다.',
+    send_h: 'S 한 번이면 DAW 편집 커서로',
+    send_p: '고른 소리를 REAPER의 편집 커서 자리에 바로 넣습니다. 파형에서 구간을 잡아 두면 그 구간만 갑니다. 끌어다 놓아도 되고, 안 되는 환경에서는 클립보드로 넘깁니다 — 조용히 실패하지 않습니다.',
+    daws_other: '그 밖의 DAW 5종', daws_clip: '클립보드',
+    key1: '목록 훑기', key2: '듣기 · 멈추기', key3: '별점', key4: 'DAW로 보내기', key5: '레이어 레시피', key6: '단축키 전체 보기',
+    dl_sub: '7일 무료 체험 후 평생 라이선스 $179. macOS와 Windows에서 씁니다.',
+    tab_mac: 'macOS', tab_win: 'Windows',
+    spec_file: '파일', spec_size: '크기', spec_support: '지원', spec_format: '포맷',
+    dl_trial_btn: '무료 체험 받기', dl_buy_btn: '지금 구매', dl_buy_note: '평생 1회',
+    step1: '받은 설치 파일을 열고 <b>SoundLib</b>을 설치합니다(macOS는 응용 프로그램 폴더로 끌어다 놓기, Windows는 설치 마법사 실행).',
+    step2: '처음 실행할 때 뜨는 보안 경고를 한 번 허용합니다. 이후로는 그냥 열립니다.',
+    step3: '체험판은 <b>7일간 모든 기능</b>을 씁니다. 기간이 지나면 구매한 라이선스 키를 넣어 계속 씁니다.',
+    note_notarize_mac: '아직 Apple 공증을 받지 않은 빌드라, 처음 열 때 macOS가 "확인되지 않은 개발자" 경고를 띄웁니다. 우클릭 → 열기로 한 번 허용하면 됩니다.',
+    note_notarize_win: '아직 코드 서명 인증서가 없는 빌드라, 처음 실행할 때 Windows가 "알 수 없는 게시자" 경고(SmartScreen)를 띄웁니다. 추가 정보 → 실행으로 한 번 허용하면 됩니다.',
+    footer1: 'SoundLib 1.0.0 — 내 컴퓨터의 효과음을 위한 라이브러리', footer2: '화면의 효과음은 모두 데모용 합성음입니다',
+  },
+  en: {
+    nav_find: 'Find', nav_measure: 'Measure', nav_recipe: 'Layer Recipe', nav_download: 'Download',
+    eyebrow: 'macOS · Windows · Sound Effects Library',
+    h1: 'Find that one sound in hundreds of thousands<br>and send it straight to your <em>DAW</em>.',
+    lede: 'SoundLib indexes <b>the SFX folders already on your computer</b> so you can find, audition, measure, and drop the sound you picked <b>straight into REAPER</b>. No cloud, no account, no subscription.',
+    cta_trial: 'Try free for 7 days', cta_learn: 'See what it does', cta_meta: 'v1.0.0 · macOS · Windows',
+    price_trial_b: '7-day free trial', price_trial_p: '— full features, no card required',
+    price_buy_b: 'then $179', price_buy_p: 'lifetime license, one-time payment',
+    hero_alt: "SoundLib's main screen: library tree on the left, a file list with waveform thumbnails, tags and loudness in the middle, and the selected sword-swing sound's waveform at the bottom.",
+    hero_caption: 'Screenshots use 40 synthesized demo sound effects.',
+    fact1_h: 'Local only', fact1_p: 'Your index, ratings, tags and memos stay on this machine. Works fully offline.',
+    fact2_h: "Never touches your originals", fact2_p: 'Scanning only builds a list. Files are never moved or rewritten — except when you explicitly ask, like renaming.',
+    fact3_h: 'Keyboard-first', fact3_p: 'Arrow keys to browse, Space to listen, number keys to rate, S to send. Your hand never has to leave the keyboard.',
+    f1_h: 'Find it even when the filename never uses that word',
+    f1_p: 'No file is named <code>clang</code>, yet searching it surfaces anvil hits, a blade ring-out, and sword clashes. An English synonym dictionary, typo correction, and associations the library learns on its own widen the search.',
+    f1_li1: '<code>whoosh -light</code> — exclude a word by prefixing it',
+    f1_li2: '<code>"metal hit"</code> — match an exact phrase',
+    f1_li3: '<code>length&lt;2</code> <code>bpm&gt;120</code> <code>channels=1</code> — numeric filters right in the search bar',
+    f1_li4: 'Auto-classified by UCS category, a different search per tab',
+    f1_alt: 'Search results for "clang": 3 anvil hits, 1 blade ring-out, 2 sword clashes.',
+    f2_h: 'Pick one, and similar sounds line up',
+    f2_p: 'Every file gets an audio fingerprint. Pick one and hit <b>Find Similar</b> — files with a different name, even from a different pack, line up by how close they sound, each with a similarity percentage.',
+    f2_li1: 'Find "a bit heavier than this one" with no name to search for', f2_li2: 'See the same family of sound scattered across packs, at a glance',
+    f2_alt: 'Similar-sound results for Air Pass Wide Slow: 100%, 97%, 84% similarity, whooshes and sword swings first.',
+    f3_h: 'Numbers for what listening alone cannot tell you',
+    f3_p: 'Analyze your library once and the numbers show up right in the list. Sort by loudness, and every file marks what was actually measured versus estimated.',
+    f3_li1: 'EBU R128 loudness (LUFS) · sample peak · clipping runs', f3_li2: 'Stereo correlation — catch phase-inverted files ahead of time',
+    f3_li3: 'Four character axes: weight · metallic · whoosh · sharpness', f3_li4: 'Reads and writes BWF · iXML metadata',
+    f3_alt: 'Measurements for a sword-clash sound: -15.1 LUFS, peak -0.2 dBFS, weight 40%, metallic 62%, whoosh 0%, sharpness 63%.',
+    f4_h: 'The way you layer sounds, saved as a recipe',
+    f4_p: 'Reads your REAPER project and finds where you stacked sounds — "heavy sword swing = metal whoosh + air + a ringing tail." The timing and level offsets between layers stay fixed; only the material changes, swapped for similar sounds from your library.',
+    f4_li1: 'Step ← → through variations and audition instantly', f4_li2: 'Send the combination you like back to REAPER, one track per layer',
+    f4_alt: "Layer Recipe window. Variation 3/19 of 'Heavy Greatsword Swing': three layers (body, air, tail) with their timing, level offset, and filename.",
+    f5_h: 'Clean up the same file scattered across folders',
+    f5_p: 'Files with matching name and size are treated as certain duplicates; sound-alike matches are flagged separately for you to review. The copy with your ratings, tags and memos is kept, and the rest goes to the <b>Trash</b>, not deleted outright.',
+    f5_li1: 'See the count and space you would free, before you commit', f5_li2: 'Daily auto-backup (last 7 kept) · undo a batch rename',
+    f5_alt: 'Duplicate-cleanup window: two matching-name-and-size groups pre-checked, two sound-alike groups left unchecked for review.',
+    send_h: 'Press S, it lands at your DAW edit cursor',
+    send_p: "Drops the sound you picked right at REAPER's edit cursor. Set a region in the waveform first and only that region goes across. Drag-and-drop works too, and where it can't, it falls back to the clipboard — it never fails silently.",
+    daws_other: '5 more DAWs', daws_clip: 'Clipboard',
+    key1: 'Browse the list', key2: 'Play · Stop', key3: 'Rate', key4: 'Send to DAW', key5: 'Layer Recipe', key6: 'Show all shortcuts',
+    dl_sub: '7-day free trial, then a $179 lifetime license. Runs on macOS and Windows.',
+    tab_mac: 'macOS', tab_win: 'Windows',
+    spec_file: 'File', spec_size: 'Size', spec_support: 'Requires', spec_format: 'Formats',
+    dl_trial_btn: 'Get the free trial', dl_buy_btn: 'Buy now', dl_buy_note: 'one-time',
+    step1: 'Open the installer and install <b>SoundLib</b> (drag into Applications on macOS, run the setup wizard on Windows).',
+    step2: 'Allow the security prompt once on first launch. It opens normally after that.',
+    step3: 'The trial unlocks <b>every feature for 7 days</b>. After that, enter your purchased license key to keep using it.',
+    note_notarize_mac: "This build isn't Apple-notarized yet, so macOS shows an \"unidentified developer\" warning on first open. Right-click → Open once to allow it.",
+    note_notarize_win: "This build has no code-signing certificate yet, so Windows SmartScreen shows an \"unknown publisher\" warning on first run. Click More info → Run anyway once to allow it.",
+    footer1: 'SoundLib 1.0.0 — a library for the sound effects already on your computer', footer2: 'Every sound shown here is a synthesized demo',
+  },
+  ja: {
+    nav_find: '検索', nav_measure: '測定', nav_recipe: 'レイヤーレシピ', nav_download: 'ダウンロード',
+    eyebrow: 'macOS · Windows · 効果音ライブラリ管理',
+    h1: '何十万もの効果音から<br>その音を見つけて、そのまま<em>DAW</em>へ。',
+    lede: 'SoundLibは<b>自分のパソコンにある効果音フォルダ</b>をインデックス化し、検索・試聴・測定して、選んだ音を<b>REAPERに直接送り込む</b>デスクトップアプリです。クラウドもアカウントも定期購入もありません。',
+    cta_trial: '7日間無料で試す', cta_learn: '機能を見る', cta_meta: 'v1.0.0 · macOS · Windows',
+    price_trial_b: '7日間無料体験', price_trial_p: '— カード登録不要で全機能',
+    price_buy_b: 'その後 $179', price_buy_p: '買い切りライセンス、一括払い',
+    hero_alt: 'SoundLibのメイン画面。左にライブラリツリー、中央に波形サムネイル・タグ・ラウドネス付きのファイルリスト、下に選択した剣を振る音の大きな波形。',
+    hero_caption: 'スクリーンショットはデモ用に合成した効果音40個で撮影しています。',
+    fact1_h: 'このパソコンだけで完結', fact1_p: 'インデックス・評価・タグ・メモはすべてこの端末内に保存されます。インターネットがなくても動作します。',
+    fact2_h: '元ファイルには触れません', fact2_p: 'スキャンはリストを作るだけです。名前変更のように明示的に指示した操作を除き、ファイルの移動や書き換えは行いません。',
+    fact3_h: 'すべてキーボードで', fact3_p: '↑↓で一覧を見て、スペースで再生し、数字キーで評価し、Sで送信します。マウスに手を移す必要がありません。',
+    f1_h: 'ファイル名にない言葉でも見つかります',
+    f1_p: '<code>clang</code>という名前のファイルは一つもありませんが、検索するとアンビル打撃・ブレードの余韻・剣の激突がヒットします。英語の類義語辞典、スペル補正、そしてライブラリ自身が学習した関連語で検索範囲を広げます。',
+    f1_li1: '<code>whoosh -light</code> — 除外したい語は先頭にマイナス',
+    f1_li2: '<code>"metal hit"</code> — 連続したフレーズのみ',
+    f1_li3: '<code>length&lt;2</code> <code>bpm&gt;120</code> <code>channels=1</code> — 数値条件も検索欄で',
+    f1_li4: 'UCSカテゴリで自動分類、タブごとに別の検索',
+    f1_alt: '検索欄に clang と入力した結果。アンビル打撃3件、ブレードの余韻1件、剣の激突2件。',
+    f2_h: '1つ選べば、似た音の順に並びます',
+    f2_p: 'すべてのファイルに音の指紋を記録します。1つ選んで<b>似た音を探す</b>を押すと、名前が違っても、別のパックに入っていても、音が近い順に並びます。類似度はパーセントでも表示されます。',
+    f2_li1: '「これより少し重い音」を名前なしで探す', f2_li2: '複数のパックに散らばった同系統の音を一目で見る',
+    f2_alt: 'Air Pass Wide Slow に似た音の結果。類似度100%、97%、84%の順に風切り音と剣を振る音が上位に来る。',
+    f3_h: '聴くだけでは分からないことを数値で',
+    f3_p: 'ライブラリを一度分析しておけば、リストにそのまま表示されます。ラウドネスで並べ替えでき、各ファイルが実測値か推定値かも区別して表示します。',
+    f3_li1: 'EBU R128ラウドネス(LUFS) · サンプルピーク · クリッピング区間', f3_li2: 'ステレオ相関 — 位相反転したファイルを事前に検出',
+    f3_li3: '4つの性格軸: 重さ · 金属感 · ウッシュ感 · 鋭さ', f3_li4: 'BWF · iXMLメタデータの読み書き',
+    f3_alt: '剣の激突音の測定値: -15.1 LUFS、ピーク -0.2 dBFS、重さ40%、金属感62%、ウッシュ感0%、鋭さ63%。',
+    f4_h: '自分のレイヤーの重ね方を、レシピとして',
+    f4_p: '自分のREAPERプロジェクトを読み込み、「重い剣振り = メタルウッシュ + エア + 響く尾」のように音を重ねた箇所を見つけます。レイヤー間のタイミング差・音量差はそのままに、素材だけをライブラリ内の似た音に差し替えてバリエーションを作ります。',
+    f4_li1: '← →でバリエーションを切り替えてすぐ試聴', f4_li2: '気に入った組み合わせをトラックごとにREAPERへ送信',
+    f4_alt: "レイヤーレシピ画面。「大剣振り — 重く」レシピのバリエーション3/19: ボディ・エア・テールの3層とそれぞれのタイミング差・音量差・ファイル名。",
+    f5_h: '複数フォルダに散らばった同じファイルを整理',
+    f5_p: '名前とサイズが一致するファイルは確実な重複として、音だけが似ているものは別枠で表示し、人が判断します。評価・タグ・メモが付いている方を残し、削除ではなく<b>ゴミ箱</b>に送るので元に戻せます。',
+    f5_li1: '実行前に、件数と空く容量を表示', f5_li2: '起動時に1日1回自動バックアップ(直近7世代保持) · 一括リネームの取り消し',
+    f5_alt: '重複整理画面。名前・サイズが同じ2グループは選択済み、音判定の2グループは未選択で確認待ち。',
+    send_h: 'Sを一度押せばDAWの編集カーソルへ',
+    send_p: '選んだ音をREAPERの編集カーソル位置にそのまま挿入します。波形で範囲を選んでおけば、その範囲だけが送られます。ドラッグ&ドロップにも対応し、それができない環境ではクリップボードにフォールバックします — 黙って失敗することはありません。',
+    daws_other: '他5種のDAW', daws_clip: 'クリップボード',
+    key1: '一覧を見る', key2: '再生 · 停止', key3: '評価', key4: 'DAWへ送信', key5: 'レイヤーレシピ', key6: 'ショートカット一覧',
+    dl_sub: '7日間無料体験後、買い切りライセンス$179。macOSとWindowsに対応。',
+    tab_mac: 'macOS', tab_win: 'Windows',
+    spec_file: 'ファイル', spec_size: 'サイズ', spec_support: '対応環境', spec_format: '対応フォーマット',
+    dl_trial_btn: '無料体験を始める', dl_buy_btn: '今すぐ購入', dl_buy_note: '買い切り',
+    step1: 'ダウンロードしたインストーラーを開き、<b>SoundLib</b>をインストールします(macOSはApplicationsフォルダへドラッグ、Windowsはセットアップウィザードを実行)。',
+    step2: '初回起動時のセキュリティ警告を一度許可します。以降は通常どおり起動します。',
+    step3: '体験版は<b>7日間すべての機能</b>を利用できます。期間終了後は購入したライセンスキーを入力して使い続けます。',
+    note_notarize_mac: 'まだApple公証を受けていないビルドのため、初回起動時にmacOSが「開発元が未確認」の警告を表示します。右クリック→開くで一度許可してください。',
+    note_notarize_win: 'まだコード署名証明書のないビルドのため、初回実行時にWindows SmartScreenが「発行元不明」の警告を表示します。「詳細情報」→「実行」で一度許可してください。',
+    footer1: 'SoundLib 1.0.0 — 自分のパソコンの効果音のためのライブラリ', footer2: '画面の効果音はすべてデモ用の合成音です',
+  },
+  zh: {
+    nav_find: '搜索', nav_measure: '测量', nav_recipe: '分层配方', nav_download: '下载',
+    eyebrow: 'macOS · Windows · 音效库管理',
+    h1: '在数十万条音效中<br>找到那个声音，直接送入<em>DAW</em>。',
+    lede: 'SoundLib 会为<b>你电脑上已有的音效文件夹</b>建立索引，让你搜索、试听、测量，并把选中的声音<b>直接放进 REAPER</b>。没有云端，没有账户，没有订阅。',
+    cta_trial: '免费试用 7 天', cta_learn: '看看能做什么', cta_meta: 'v1.0.0 · macOS · Windows',
+    price_trial_b: '7 天免费试用', price_trial_p: '— 无需绑卡，功能齐全',
+    price_buy_b: '之后 $179', price_buy_p: '买断制授权，一次性付款',
+    hero_alt: 'SoundLib 主界面：左侧是库文件树，中间是带波形缩略图、标签和响度的文件列表，下方是选中的挥剑音效的波形。',
+    hero_caption: '截图使用的是 40 个合成的演示音效。',
+    fact1_h: '仅保存在本机', fact1_p: '索引、评分、标签、备注全部留在这台电脑上。没有网络也能照常使用。',
+    fact2_h: '不动你的原始文件', fact2_p: '扫描只是建立列表，不会移动或改写文件——除非你明确操作，比如重命名。',
+    fact3_h: '全键盘操作', fact3_p: '↑↓浏览列表，空格试听，数字键评分，S 键发送。手不用离开键盘。',
+    f1_h: '文件名里没有的词也能搜到',
+    f1_p: '没有任何文件名叫 <code>clang</code>，但搜索它会找到铁砧撞击、金属余音和刀剑碰撞。英语同义词词典、拼写纠正，以及库自己学到的关联词会扩大搜索范围。',
+    f1_li1: '<code>whoosh -light</code> — 想排除的词前面加负号',
+    f1_li2: '<code>"metal hit"</code> — 只匹配完整短语',
+    f1_li3: '<code>length&lt;2</code> <code>bpm&gt;120</code> <code>channels=1</code> — 数值条件也能直接写在搜索框里',
+    f1_li4: '按 UCS 分类自动归类，每个标签页可单独搜索',
+    f1_alt: '搜索框输入 clang 的结果：3 个铁砧撞击、1 个金属余音、2 个刀剑碰撞。',
+    f2_h: '选中一个，相似的声音自动排开',
+    f2_p: '每个文件都会留下声音指纹。选中一个并点击<b>查找相似声音</b>，即使文件名不同、来自不同的音效包，也会按声音的接近程度排列，并显示相似度百分比。',
+    f2_li1: '不知道名字也能找到"比这个再重一点"的声音', f2_li2: '一眼看清分散在各个音效包里的同类声音',
+    f2_alt: '与 Air Pass Wide Slow 相似的结果：相似度 100%、97%、84%，气流声和挥剑声排在最前面。',
+    f3_h: '把听不出来的东西变成数字',
+    f3_p: '给库做一次分析，数值就会直接显示在列表里。可以按响度排序，每个文件也会标明数值是实测还是估计。',
+    f3_li1: 'EBU R128 响度(LUFS) · 采样峰值 · 削波区间', f3_li2: '立体声相关性 — 提前发现相位反转的文件',
+    f3_li3: '四个特征维度：重量 · 金属感 · 风声感 · 锐利度', f3_li4: '读写 BWF · iXML 元数据',
+    f3_alt: '刀剑碰撞声的测量值：-15.1 LUFS，峰值 -0.2 dBFS，重量 40%，金属感 62%，风声感 0%，锐利度 63%。',
+    f4_h: '把你叠加声音的方式，存成配方',
+    f4_p: '读取你的 REAPER 工程，找出声音叠层的地方——"沉重的挥剑 = 金属风声 + 气流 + 余音尾巴"。层与层之间的时间差和音量差保持不变，只把素材替换成库里相似的声音，生成变体。',
+    f4_li1: '用 ← → 切换变体并立即试听', f4_li2: '把满意的组合按轨道分别发送到 REAPER',
+    f4_alt: '分层配方窗口。"沉重大剑挥砍"配方的第 3/19 个变体：body、air、tail 三层及各自的时间差、音量差和文件名。',
+    f5_h: '整理散落在多个文件夹里的相同文件',
+    f5_p: '名称和大小都相同的文件会被视为确定重复；仅声音相似的会单独标出，交给你来判断。保留带有评分、标签、备注的那份，其余的会被送进<b>回收站</b>而不是直接删除，可以恢复。',
+    f5_li1: '执行前就能看到会清理多少个文件、腾出多少空间', f5_li2: '每次启动自动备份一次(保留最近 7 份) · 可撤销批量重命名',
+    f5_alt: '整理重复项窗口：两个"名称·大小相同"的分组已勾选，两个"仅声音相似"的分组留空待人工确认。',
+    send_h: '按一下 S，直达 DAW 编辑光标',
+    send_p: '把选中的声音直接放到 REAPER 编辑光标所在的位置。先在波形上选好一段，就只发送那一段。也支持拖放，在不支持的环境下会回退到剪贴板——不会悄无声息地失败。',
+    daws_other: '另外 5 种 DAW', daws_clip: '剪贴板',
+    key1: '浏览列表', key2: '播放 · 停止', key3: '评分', key4: '发送到 DAW', key5: '分层配方', key6: '查看全部快捷键',
+    dl_sub: '免费试用 7 天，之后 $179 买断制授权。支持 macOS 和 Windows。',
+    tab_mac: 'macOS', tab_win: 'Windows',
+    spec_file: '文件', spec_size: '大小', spec_support: '系统要求', spec_format: '支持格式',
+    dl_trial_btn: '获取免费试用', dl_buy_btn: '立即购买', dl_buy_note: '一次性',
+    step1: '打开安装包，安装 <b>SoundLib</b>(macOS 拖入"应用程序"文件夹，Windows 运行安装向导)。',
+    step2: '首次打开时允许一次安全提示，之后就能正常打开。',
+    step3: '试用版<b>7 天内可用全部功能</b>。到期后输入购买的许可证密钥即可继续使用。',
+    note_notarize_mac: '这个版本还没有经过 Apple 公证，首次打开时 macOS 会提示"无法验证开发者"。右键点击→打开，允许一次即可。',
+    note_notarize_win: '这个版本还没有代码签名证书，首次运行时 Windows SmartScreen 会提示"发布者未知"。点击"更多信息"→"仍要运行"，允许一次即可。',
+    footer1: 'SoundLib 1.0.0 — 为你电脑里的音效打造的库', footer2: '画面中的音效均为演示用合成音',
+  },
+}
+
+// ── 언어 적용 ────────────────────────────────────────────────────────────
+function applyLang(lang) {
+  const dict = I18N[lang] || I18N.ko
+  document.documentElement.lang = lang
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n')
+    if (dict[k] != null) el.textContent = dict[k]
+  })
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const k = el.getAttribute('data-i18n-html')
+    if (dict[k] != null) el.innerHTML = dict[k]
+  })
+  document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+    const [attr, k] = el.getAttribute('data-i18n-attr').split(':')
+    if (dict[k] != null) el.setAttribute(attr, dict[k])
+  })
+  const note = document.getElementById('notarizeNote')
+  const winTab = document.getElementById('tabWin').classList.contains('on')
+  if (note) note.textContent = winTab ? (dict.note_notarize_win || dict.note_notarize) : (dict.note_notarize_mac || dict.note_notarize)
+  try { localStorage.setItem('soundlib.lang', lang) } catch (e) {}
+}
+
+function detectLang() {
+  try { const saved = localStorage.getItem('soundlib.lang'); if (saved && I18N[saved]) return saved } catch (e) {}
+  const nav = (navigator.language || 'ko').toLowerCase()
+  if (nav.startsWith('ko')) return 'ko'
+  if (nav.startsWith('ja')) return 'ja'
+  if (nav.startsWith('zh')) return 'zh'
+  if (nav.startsWith('en')) return 'en'
+  return 'ko'
+}
+
+const initialLang = detectLang()
+document.getElementById('langPick').value = initialLang
+applyLang(initialLang)
+document.getElementById('langPick').addEventListener('change', e => applyLang(e.target.value))
+
+// ── 플랫폼 탭 ────────────────────────────────────────────────────────────
+const tabMac = document.getElementById('tabMac'), tabWin = document.getElementById('tabWin')
+const specMac = document.getElementById('specMac'), specWin = document.getElementById('specWin')
+function setPlatform(p) {
+  const mac = p === 'mac'
+  tabMac.classList.toggle('on', mac); tabWin.classList.toggle('on', !mac)
+  specMac.hidden = !mac; specWin.hidden = mac
+  wireDownload()
+  applyLang(document.getElementById('langPick').value)
+}
+tabMac.addEventListener('click', () => setPlatform('mac'))
+tabWin.addEventListener('click', () => setPlatform('win'))
+
+// ── 체험/구매 버튼 ───────────────────────────────────────────────────────
+function wireDownload() {
+  const mac = tabMac.classList.contains('on')
+  const url = mac ? LINKS.mac : LINKS.win
   const btn = document.getElementById('dlBtn')
-  if (DOWNLOAD_URL) {
-    btn.href = DOWNLOAD_URL
+  if (url) {
+    btn.href = url; btn.removeAttribute('aria-disabled')
+    document.getElementById('dlLabel').setAttribute('data-i18n', 'dl_trial_btn')
   } else {
-    btn.setAttribute('aria-disabled', 'true')
-    btn.removeAttribute('href')
-    document.getElementById('dlLabel').textContent = '배포 링크 준비 중'
+    btn.removeAttribute('href'); btn.setAttribute('aria-disabled', 'true')
+    document.getElementById('dlLabel').textContent = mac ? 'DMG' : 'Windows'
   }
+  const buyBtn = document.getElementById('buyBtn')
+  if (LINKS.buy) { buyBtn.href = LINKS.buy; buyBtn.removeAttribute('aria-disabled') }
+  else { buyBtn.removeAttribute('href'); buyBtn.setAttribute('aria-disabled', 'true') }
+}
+wireDownload()
 </script>
 </body>
 </html>
