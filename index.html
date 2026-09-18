@@ -87,10 +87,6 @@
   /* 히어로 — 잭 소켓 아이콘과 실제 앱 화면. 과장 문구 없이 무엇을 하는지부터. */
   .hero { padding-block: 72px 40px; }
   .hero-top { display: grid; grid-template-columns: 1fr auto; gap: 40px; align-items: center; }
-  .eyebrow-plate { display: inline-flex; gap: 8px; align-items: center; font-family: var(--display); font-weight: 600;
-    font-size: 14px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim);
-    padding: 5px 12px; border-radius: 6px; background: var(--well); box-shadow: var(--groove-in); }
-  .eyebrow-plate i { width: 6px; height: 6px; border-radius: 50%; background: var(--cable); box-shadow: 0 0 8px var(--cable); }
   h1 { font-weight: 900; font-size: clamp(32px, 5.2vw, 60px); line-height: 1.18; letter-spacing: -0.02em;
     margin: 20px 0 18px; text-wrap: balance; }
   h1 em { font-style: normal; color: var(--cable); }
@@ -230,7 +226,6 @@
   <section class="hero wrap">
     <div class="hero-top">
       <div>
-        <span class="eyebrow-plate"><i></i><span data-i18n="eyebrow">macOS · Windows · 효과음 라이브러리 관리</span></span>
         <h1 data-i18n-html="h1"></h1>
         <p class="lede" data-i18n-html="lede"></p>
         <div class="cta">
@@ -410,7 +405,6 @@ const LINKS = {
 const I18N = {
   ko: {
     nav_find: '찾기', nav_measure: '재기', nav_recipe: '레이어 레시피', nav_download: '다운로드',
-    eyebrow: 'macOS · Windows · 효과음 라이브러리 관리',
     h1: '수십만 개의 효과음에서<br><em>그 소리</em>를 찾아 바로 DAW로.',
     lede: 'SoundLib은 <b>내 컴퓨터에 있는 효과음 폴더</b>를 색인해서 찾고, 듣고, 재고, 고른 소리를 <b>REAPER에 바로 꽂아 넣는</b> 데스크톱 앱입니다. 클라우드도, 계정도, 구독도 없습니다.',
     cta_trial: '7일 무료로 체험하기', cta_learn: '무엇을 하는지 보기', cta_meta: 'v1.0.0 · macOS · Windows',
@@ -462,7 +456,6 @@ const I18N = {
   },
   en: {
     nav_find: 'Find', nav_measure: 'Measure', nav_recipe: 'Layer Recipe', nav_download: 'Download',
-    eyebrow: 'macOS · Windows · Sound Effects Library',
     h1: 'Find that one sound in hundreds of thousands<br>and send it straight to your <em>DAW</em>.',
     lede: 'SoundLib indexes <b>the SFX folders already on your computer</b> so you can find, audition, measure, and drop the sound you picked <b>straight into REAPER</b>. No cloud, no account, no subscription.',
     cta_trial: 'Try free for 7 days', cta_learn: 'See what it does', cta_meta: 'v1.0.0 · macOS · Windows',
@@ -514,7 +507,6 @@ const I18N = {
   },
   ja: {
     nav_find: '検索', nav_measure: '測定', nav_recipe: 'レイヤーレシピ', nav_download: 'ダウンロード',
-    eyebrow: 'macOS · Windows · 効果音ライブラリ管理',
     h1: '何十万もの効果音から<br>その音を見つけて、そのまま<em>DAW</em>へ。',
     lede: 'SoundLibは<b>自分のパソコンにある効果音フォルダ</b>をインデックス化し、検索・試聴・測定して、選んだ音を<b>REAPERに直接送り込む</b>デスクトップアプリです。クラウドもアカウントも定期購入もありません。',
     cta_trial: '7日間無料で試す', cta_learn: '機能を見る', cta_meta: 'v1.0.0 · macOS · Windows',
@@ -566,7 +558,6 @@ const I18N = {
   },
   zh: {
     nav_find: '搜索', nav_measure: '测量', nav_recipe: '分层配方', nav_download: '下载',
-    eyebrow: 'macOS · Windows · 音效库管理',
     h1: '在数十万条音效中<br>找到那个声音，直接送入<em>DAW</em>。',
     lede: 'SoundLib 会为<b>你电脑上已有的音效文件夹</b>建立索引，让你搜索、试听、测量，并把选中的声音<b>直接放进 REAPER</b>。没有云端，没有账户，没有订阅。',
     cta_trial: '免费试用 7 天', cta_learn: '看看能做什么', cta_meta: 'v1.0.0 · macOS · Windows',

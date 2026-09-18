@@ -20,6 +20,24 @@
         ],
         "createdAt": "2026-09-18T23:02:36.744Z",
         "reason": "faint 토큰은 캡션 푸터 스펙 라벨처럼 찾으라고 있는 텍스트에만 쓴다. 앱 DESIGN.md의 muted 관례와 동일. 원래 사이트부터 있던 4곳, 이번에 새로 만들지 않음"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "rgba(77,163,255,0.35)",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-09-18T23:05:59.087Z",
+        "reason": "btn-primary 램프 글로우, 사이트 첫 버전부터 있던 앱의 led-glow 토큰과 같은 언어. 이번에 새로 만들지 않음"
+      },
+      {
+        "rule": "dark-glow",
+        "value": "rgba(77,163,255,0.28)",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-09-18T23:05:59.146Z",
+        "reason": "잭 아이콘 숨쉬는 글로우 애니메이션, 사이트 첫 버전부터 있던 요소. 이번에 새로 만들지 않음"
       }
     ]
   }
