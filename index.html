@@ -314,6 +314,8 @@
         <ul>
           <li data-i18n="f5_li1">몇 개, 얼마만큼 비워지는지 누르기 전에 보여주기</li>
           <li data-i18n="f5_li2">켤 때 하루 한 번 자동 백업(최근 7벌) · 이름 바꾸기 되돌리기</li>
+          <li data-i18n="f5_li3">Batch Renamer 앱으로 보내 규칙대로 이름 바꾸고, 바뀐 이름을 자동으로 반영</li>
+          <li data-i18n="f5_li4">UCS 표준 이름(CatID_FXName_CreatorID_SourceID)으로 한 번에 변환</li>
         </ul>
       </div>
       <figure class="shot narrow"><img src="dedupe.jpg" width="1240" height="893" loading="lazy" data-i18n-attr="alt:f5_alt" alt=""></figure>
@@ -431,9 +433,10 @@ const I18N = {
     f5_h: '여러 폴더에 흩어진 같은 파일을 정리',
     f5_p: '이름과 크기가 같은 파일은 확실한 중복으로, 소리만 비슷한 것은 따로 표시해 사람이 고르게 합니다. 별점·태그·메모를 붙여 둔 쪽을 남기고, 지우는 대신 <b>휴지통으로</b> 보내서 되돌릴 수 있습니다.',
     f5_li1: '몇 개, 얼마만큼 비워지는지 누르기 전에 보여주기', f5_li2: '켤 때 하루 한 번 자동 백업(최근 7벌) · 이름 바꾸기 되돌리기',
+    f5_li3: 'Batch Renamer 앱으로 보내 규칙대로 이름 바꾸고, 바뀐 이름을 자동으로 반영', f5_li4: 'UCS 표준 이름(CatID_FXName_CreatorID_SourceID)으로 한 번에 변환',
     f5_alt: '중복 정리 창. 이름·크기가 같은 무리 2개는 체크되어 있고, 소리로 판단한 무리 2개는 체크가 비어 있다.',
     send_h: 'S 한 번이면 DAW 편집 커서로',
-    send_p: '고른 소리를 REAPER의 편집 커서 자리에 바로 넣습니다. 파형에서 구간을 잡아 두면 그 구간만 갑니다. 끌어다 놓아도 되고, 안 되는 환경에서는 클립보드로 넘깁니다 — 조용히 실패하지 않습니다.',
+    send_p: '고른 소리를 REAPER의 편집 커서 자리에 바로 넣습니다. 파형에서 구간을 잡아 두면 그 구간만 갑니다. 끌어다 놓아도 되고, 안 되는 환경에서는 클립보드로 넘깁니다 — 조용히 실패하지 않습니다. 구간은 원본을 자르지 않고 참조로만 보내는 비파괴 방식이라, 타임라인에서 끝을 늘리면 잘렸던 앞뒤가 그대로 돌아옵니다.',
     daws_other: '그 밖의 DAW 5종', daws_clip: '클립보드',
     key1: '목록 훑기', key2: '듣기 · 멈추기', key3: '별점', key4: 'DAW로 보내기', key5: '레이어 레시피', key6: '단축키 전체 보기',
     dl_sub: '7일 무료 체험. macOS와 Windows에서 씁니다.',
@@ -481,9 +484,10 @@ const I18N = {
     f5_h: 'Clean up the same file scattered across folders',
     f5_p: 'Files with matching name and size are treated as certain duplicates; sound-alike matches are flagged separately for you to review. The copy with your ratings, tags and memos is kept, and the rest goes to the <b>Trash</b>, not deleted outright.',
     f5_li1: 'See the count and space you would free, before you commit', f5_li2: 'Daily auto-backup (last 7 kept) · undo a batch rename',
+    f5_li3: 'Send to the Batch Renamer app to rename by rule, then sync the new names back automatically', f5_li4: 'Convert to UCS standard names (CatID_FXName_CreatorID_SourceID) in one pass',
     f5_alt: 'Duplicate-cleanup window: two matching-name-and-size groups pre-checked, two sound-alike groups left unchecked for review.',
     send_h: 'Press S, it lands at your DAW edit cursor',
-    send_p: "Drops the sound you picked right at REAPER's edit cursor. Set a region in the waveform first and only that region goes across. Drag-and-drop works too, and where it can't, it falls back to the clipboard — it never fails silently.",
+    send_p: "Drops the sound you picked right at REAPER's edit cursor. Set a region in the waveform first and only that region goes across. Drag-and-drop works too, and where it can't, it falls back to the clipboard — it never fails silently. Regions are sent as a non-destructive reference to the original, never a trimmed copy — extend the clip's edge on the timeline and the trimmed parts come right back.",
     daws_other: '5 more DAWs', daws_clip: 'Clipboard',
     key1: 'Browse the list', key2: 'Play · Stop', key3: 'Rate', key4: 'Send to DAW', key5: 'Layer Recipe', key6: 'Show all shortcuts',
     dl_sub: '7-day free trial. Runs on macOS and Windows.',
@@ -531,9 +535,10 @@ const I18N = {
     f5_h: '複数フォルダに散らばった同じファイルを整理',
     f5_p: '名前とサイズが一致するファイルは確実な重複として、音だけが似ているものは別枠で表示し、人が判断します。評価・タグ・メモが付いている方を残し、削除ではなく<b>ゴミ箱</b>に送るので元に戻せます。',
     f5_li1: '実行前に、件数と空く容量を表示', f5_li2: '起動時に1日1回自動バックアップ(直近7世代保持) · 一括リネームの取り消し',
+    f5_li3: 'Batch Renamerアプリへ送ってルール通りに名前を変更、変更後の名前は自動で反映', f5_li4: 'UCS標準名(CatID_FXName_CreatorID_SourceID)に一括変換',
     f5_alt: '重複整理画面。名前・サイズが同じ2グループは選択済み、音判定の2グループは未選択で確認待ち。',
     send_h: 'Sを一度押せばDAWの編集カーソルへ',
-    send_p: '選んだ音をREAPERの編集カーソル位置にそのまま挿入します。波形で範囲を選んでおけば、その範囲だけが送られます。ドラッグ&ドロップにも対応し、それができない環境ではクリップボードにフォールバックします — 黙って失敗することはありません。',
+    send_p: '選んだ音をREAPERの編集カーソル位置にそのまま挿入します。波形で範囲を選んでおけば、その範囲だけが送られます。ドラッグ&ドロップにも対応し、それができない環境ではクリップボードにフォールバックします — 黙って失敗することはありません。区間は元ファイルを切り出さず参照として送る非破壊方式のため、タイムラインで端を伸ばせば切り詰められていた前後がそのまま戻ります。',
     daws_other: '他5種のDAW', daws_clip: 'クリップボード',
     key1: '一覧を見る', key2: '再生 · 停止', key3: '評価', key4: 'DAWへ送信', key5: 'レイヤーレシピ', key6: 'ショートカット一覧',
     dl_sub: '7日間無料体験。macOSとWindowsに対応。',
@@ -581,9 +586,10 @@ const I18N = {
     f5_h: '整理散落在多个文件夹里的相同文件',
     f5_p: '名称和大小都相同的文件会被视为确定重复；仅声音相似的会单独标出，交给你来判断。保留带有评分、标签、备注的那份，其余的会被送进<b>回收站</b>而不是直接删除，可以恢复。',
     f5_li1: '执行前就能看到会清理多少个文件、腾出多少空间', f5_li2: '每次启动自动备份一次(保留最近 7 份) · 可撤销批量重命名',
+    f5_li3: '发送到 Batch Renamer 应用按规则重命名，改好的名称会自动同步回来', f5_li4: '一次性转换为 UCS 标准名称(CatID_FXName_CreatorID_SourceID)',
     f5_alt: '整理重复项窗口：两个"名称·大小相同"的分组已勾选，两个"仅声音相似"的分组留空待人工确认。',
     send_h: '按一下 S，直达 DAW 编辑光标',
-    send_p: '把选中的声音直接放到 REAPER 编辑光标所在的位置。先在波形上选好一段，就只发送那一段。也支持拖放，在不支持的环境下会回退到剪贴板——不会悄无声息地失败。',
+    send_p: '把选中的声音直接放到 REAPER 编辑光标所在的位置。先在波形上选好一段，就只发送那一段。也支持拖放，在不支持的环境下会回退到剪贴板——不会悄无声息地失败。区间以引用原文件的无损方式发送，不会裁剪出新文件——在时间线上拖长片段边缘，被裁掉的前后部分会原样恢复。',
     daws_other: '另外 5 种 DAW', daws_clip: '剪贴板',
     key1: '浏览列表', key2: '播放 · 停止', key3: '评分', key4: '发送到 DAW', key5: '分层配方', key6: '查看全部快捷键',
     dl_sub: '免费试用 7 天。支持 macOS 和 Windows。',
