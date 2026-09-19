@@ -182,9 +182,6 @@
   .spec dt { color: var(--faint); }
   .spec dd { margin: 0; color: var(--text); }
   .buy-row { display: flex; flex-wrap: wrap; gap: 10px; }
-  .price-tag { display: inline-flex; align-items: baseline; gap: 4px; margin-left: 2px; }
-  .price-tag b { font-size: 15px; }
-  .price-tag small { color: rgba(255,255,255,0.75); font-size: 11px; }
   .steps { counter-reset: s; list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
   .steps li { counter-increment: s; display: grid; grid-template-columns: 34px 1fr; gap: 12px; color: var(--dim); }
   .steps li::before { content: counter(s); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
@@ -371,7 +368,6 @@
 
         <div class="buy-row">
           <a class="btn btn-primary" id="dlBtn" href="#download"><span class="led"></span><span id="dlLabel" data-i18n="dl_trial_btn">무료 체험 받기</span></a>
-          <a class="btn btn-ghost" id="buyBtn" href="#download"><span data-i18n="dl_buy_btn">지금 구매</span> <span class="price-tag"><b>$179</b> <small data-i18n="dl_buy_note">평생 1회</small></span></a>
         </div>
       </div>
       <div>
@@ -398,7 +394,6 @@
 const LINKS = {
   mac: 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-1.0.0-arm64.dmg',
   win: 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-Setup-1.0.0-x64.exe',
-  buy: '', // Gumroad 상품 결제 링크 — 상품을 만들면 채운다 (예: https://fiox94.gumroad.com/l/soundlib)
 }
 
 // ── 다국어 ───────────────────────────────────────────────────────────────
@@ -446,7 +441,7 @@ const I18N = {
     dl_sub: '7일 무료 체험 후 평생 라이선스 $179. macOS와 Windows에서 씁니다.',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: '파일', spec_size: '크기', spec_support: '지원', spec_format: '포맷',
-    dl_trial_btn: '무료 체험 받기', dl_buy_btn: '지금 구매', dl_buy_note: '평생 1회',
+    dl_trial_btn: '무료 체험 받기',
     step1: '받은 설치 파일을 열고 <b>SoundLib</b>을 설치합니다(macOS는 응용 프로그램 폴더로 끌어다 놓기, Windows는 설치 마법사 실행).',
     step2: '처음 실행할 때 뜨는 보안 경고를 한 번 허용합니다. 이후로는 그냥 열립니다.',
     step3: '체험판은 <b>7일간 모든 기능</b>을 씁니다. 기간이 지나면 구매한 라이선스 키를 넣어 계속 씁니다.',
@@ -497,7 +492,7 @@ const I18N = {
     dl_sub: '7-day free trial, then a $179 lifetime license. Runs on macOS and Windows.',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: 'File', spec_size: 'Size', spec_support: 'Requires', spec_format: 'Formats',
-    dl_trial_btn: 'Get the free trial', dl_buy_btn: 'Buy now', dl_buy_note: 'one-time',
+    dl_trial_btn: 'Get the free trial',
     step1: 'Open the installer and install <b>SoundLib</b> (drag into Applications on macOS, run the setup wizard on Windows).',
     step2: 'Allow the security prompt once on first launch. It opens normally after that.',
     step3: 'The trial unlocks <b>every feature for 7 days</b>. After that, enter your purchased license key to keep using it.',
@@ -548,7 +543,7 @@ const I18N = {
     dl_sub: '7日間無料体験後、買い切りライセンス$179。macOSとWindowsに対応。',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: 'ファイル', spec_size: 'サイズ', spec_support: '対応環境', spec_format: '対応フォーマット',
-    dl_trial_btn: '無料体験を始める', dl_buy_btn: '今すぐ購入', dl_buy_note: '買い切り',
+    dl_trial_btn: '無料体験を始める',
     step1: 'ダウンロードしたインストーラーを開き、<b>SoundLib</b>をインストールします(macOSはApplicationsフォルダへドラッグ、Windowsはセットアップウィザードを実行)。',
     step2: '初回起動時のセキュリティ警告を一度許可します。以降は通常どおり起動します。',
     step3: '体験版は<b>7日間すべての機能</b>を利用できます。期間終了後は購入したライセンスキーを入力して使い続けます。',
@@ -599,7 +594,7 @@ const I18N = {
     dl_sub: '免费试用 7 天，之后 $179 买断制授权。支持 macOS 和 Windows。',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: '文件', spec_size: '大小', spec_support: '系统要求', spec_format: '支持格式',
-    dl_trial_btn: '获取免费试用', dl_buy_btn: '立即购买', dl_buy_note: '一次性',
+    dl_trial_btn: '获取免费试用',
     step1: '打开安装包，安装 <b>SoundLib</b>(macOS 拖入"应用程序"文件夹，Windows 运行安装向导)。',
     step2: '首次打开时允许一次安全提示，之后就能正常打开。',
     step3: '试用版<b>7 天内可用全部功能</b>。到期后输入购买的许可证密钥即可继续使用。',
@@ -671,9 +666,6 @@ function wireDownload() {
     btn.removeAttribute('href'); btn.setAttribute('aria-disabled', 'true')
     document.getElementById('dlLabel').textContent = mac ? 'DMG' : 'Windows'
   }
-  const buyBtn = document.getElementById('buyBtn')
-  if (LINKS.buy) { buyBtn.href = LINKS.buy; buyBtn.removeAttribute('aria-disabled') }
-  else { buyBtn.removeAttribute('href'); buyBtn.setAttribute('aria-disabled', 'true') }
 }
 wireDownload()
 </script>
