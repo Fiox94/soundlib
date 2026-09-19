@@ -170,7 +170,7 @@
   .keys kbd { min-width: 34px; text-align: center; }
 
   /* 다운로드 · 구매 */
-  .dl { margin: 72px 0 0; padding: 48px 0 64px; border-top: 1px solid var(--line); }
+  .dl { margin-top: 72px; padding: 48px 0 64px; border-top: 1px solid var(--line); }
   .dl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
   @media (max-width: 860px) { .dl-grid { grid-template-columns: 1fr; gap: 32px; } }
   .dl h2 { font-size: clamp(26px, 3.4vw, 40px); font-weight: 900; margin: 8px 0 14px; letter-spacing: -0.02em; }
@@ -232,7 +232,6 @@
         </div>
         <p class="pricebar">
           <span><i class="dot"></i><b data-i18n="price_trial_b">7일 무료 체험</b> <span data-i18n="price_trial_p">— 카드 등록 없이 전체 기능</span></span>
-          <span><i class="dot"></i><b data-i18n="price_buy_b">이후 $179</b> <span data-i18n="price_buy_p">평생 라이선스, 한 번만 결제</span></span>
         </p>
       </div>
       <img class="jack" src="icon.png" alt="SoundLib app icon">
@@ -346,7 +345,7 @@
       <div>
         <span class="tag">Download</span>
         <h2>SoundLib 1.0.0</h2>
-        <p style="color:var(--dim);margin:0 0 18px" data-i18n="dl_sub">7일 무료 체험 후 평생 라이선스 $179. macOS와 Windows에서 씁니다.</p>
+        <p style="color:var(--dim);margin:0 0 18px" data-i18n="dl_sub">7일 무료 체험. macOS와 Windows에서 씁니다.</p>
 
         <div class="platform-tabs" role="tablist" aria-label="platform">
           <button class="ptab on" id="tabMac" data-i18n="tab_mac">macOS</button>
@@ -404,7 +403,6 @@ const I18N = {
     lede: 'SoundLib은 <b>내 컴퓨터에 있는 효과음 폴더</b>를 색인해서 찾고, 듣고, 재고, 고른 소리를 <b>REAPER에 바로 꽂아 넣는</b> 데스크톱 앱입니다. 클라우드도, 계정도, 구독도 없습니다.',
     cta_trial: '7일 무료로 체험하기', cta_learn: '무엇을 하는지 보기', cta_meta: 'v1.0.0 · macOS · Windows',
     price_trial_b: '7일 무료 체험', price_trial_p: '— 카드 등록 없이 전체 기능',
-    price_buy_b: '이후 $179', price_buy_p: '평생 라이선스, 한 번만 결제',
     hero_alt: 'SoundLib 메인 화면. 왼쪽 라이브러리 트리, 가운데 파형 썸네일과 태그·라우드니스가 붙은 파일 목록, 아래에 선택한 칼 휘두르는 소리의 큰 파형.',
     hero_caption: '스크린샷은 데모용으로 합성한 효과음 40개로 찍었습니다.',
     fact1_h: '내 컴퓨터에서만', fact1_p: '색인·별점·태그·메모가 전부 이 기계 안에 남습니다. 인터넷이 없어도 그대로 동작합니다.',
@@ -438,13 +436,13 @@ const I18N = {
     send_p: '고른 소리를 REAPER의 편집 커서 자리에 바로 넣습니다. 파형에서 구간을 잡아 두면 그 구간만 갑니다. 끌어다 놓아도 되고, 안 되는 환경에서는 클립보드로 넘깁니다 — 조용히 실패하지 않습니다.',
     daws_other: '그 밖의 DAW 5종', daws_clip: '클립보드',
     key1: '목록 훑기', key2: '듣기 · 멈추기', key3: '별점', key4: 'DAW로 보내기', key5: '레이어 레시피', key6: '단축키 전체 보기',
-    dl_sub: '7일 무료 체험 후 평생 라이선스 $179. macOS와 Windows에서 씁니다.',
+    dl_sub: '7일 무료 체험. macOS와 Windows에서 씁니다.',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: '파일', spec_size: '크기', spec_support: '지원', spec_format: '포맷',
     dl_trial_btn: '무료 체험 받기',
     step1: '받은 설치 파일을 열고 <b>SoundLib</b>을 설치합니다(macOS는 응용 프로그램 폴더로 끌어다 놓기, Windows는 설치 마법사 실행).',
     step2: '처음 실행할 때 뜨는 보안 경고를 한 번 허용합니다. 이후로는 그냥 열립니다.',
-    step3: '체험판은 <b>7일간 모든 기능</b>을 씁니다. 기간이 지나면 구매한 라이선스 키를 넣어 계속 씁니다.',
+    step3: '체험판은 <b>7일간 모든 기능</b>을 씁니다. 기간이 지나면 잠깁니다.',
     note_notarize_mac: '아직 Apple 공증을 받지 않은 빌드라, 처음 열 때 macOS가 "확인되지 않은 개발자" 경고를 띄웁니다. 우클릭 → 열기로 한 번 허용하면 됩니다.',
     note_notarize_win: '아직 코드 서명 인증서가 없는 빌드라, 처음 실행할 때 Windows가 "알 수 없는 게시자" 경고(SmartScreen)를 띄웁니다. 추가 정보 → 실행으로 한 번 허용하면 됩니다.',
     footer1: 'SoundLib 1.0.0 — 내 컴퓨터의 효과음을 위한 라이브러리', footer2: '화면의 효과음은 모두 데모용 합성음입니다',
@@ -455,7 +453,6 @@ const I18N = {
     lede: 'SoundLib indexes <b>the SFX folders already on your computer</b> so you can find, audition, measure, and drop the sound you picked <b>straight into REAPER</b>. No cloud, no account, no subscription.',
     cta_trial: 'Try free for 7 days', cta_learn: 'See what it does', cta_meta: 'v1.0.0 · macOS · Windows',
     price_trial_b: '7-day free trial', price_trial_p: '— full features, no card required',
-    price_buy_b: 'then $179', price_buy_p: 'lifetime license, one-time payment',
     hero_alt: "SoundLib's main screen: library tree on the left, a file list with waveform thumbnails, tags and loudness in the middle, and the selected sword-swing sound's waveform at the bottom.",
     hero_caption: 'Screenshots use 40 synthesized demo sound effects.',
     fact1_h: 'Local only', fact1_p: 'Your index, ratings, tags and memos stay on this machine. Works fully offline.',
@@ -489,13 +486,13 @@ const I18N = {
     send_p: "Drops the sound you picked right at REAPER's edit cursor. Set a region in the waveform first and only that region goes across. Drag-and-drop works too, and where it can't, it falls back to the clipboard — it never fails silently.",
     daws_other: '5 more DAWs', daws_clip: 'Clipboard',
     key1: 'Browse the list', key2: 'Play · Stop', key3: 'Rate', key4: 'Send to DAW', key5: 'Layer Recipe', key6: 'Show all shortcuts',
-    dl_sub: '7-day free trial, then a $179 lifetime license. Runs on macOS and Windows.',
+    dl_sub: '7-day free trial. Runs on macOS and Windows.',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: 'File', spec_size: 'Size', spec_support: 'Requires', spec_format: 'Formats',
     dl_trial_btn: 'Get the free trial',
     step1: 'Open the installer and install <b>SoundLib</b> (drag into Applications on macOS, run the setup wizard on Windows).',
     step2: 'Allow the security prompt once on first launch. It opens normally after that.',
-    step3: 'The trial unlocks <b>every feature for 7 days</b>. After that, enter your purchased license key to keep using it.',
+    step3: 'The trial unlocks <b>every feature for 7 days</b>. After that, it locks.',
     note_notarize_mac: "This build isn't Apple-notarized yet, so macOS shows an \"unidentified developer\" warning on first open. Right-click → Open once to allow it.",
     note_notarize_win: "This build has no code-signing certificate yet, so Windows SmartScreen shows an \"unknown publisher\" warning on first run. Click More info → Run anyway once to allow it.",
     footer1: 'SoundLib 1.0.0 — a library for the sound effects already on your computer', footer2: 'Every sound shown here is a synthesized demo',
@@ -506,7 +503,6 @@ const I18N = {
     lede: 'SoundLibは<b>自分のパソコンにある効果音フォルダ</b>をインデックス化し、検索・試聴・測定して、選んだ音を<b>REAPERに直接送り込む</b>デスクトップアプリです。クラウドもアカウントも定期購入もありません。',
     cta_trial: '7日間無料で試す', cta_learn: '機能を見る', cta_meta: 'v1.0.0 · macOS · Windows',
     price_trial_b: '7日間無料体験', price_trial_p: '— カード登録不要で全機能',
-    price_buy_b: 'その後 $179', price_buy_p: '買い切りライセンス、一括払い',
     hero_alt: 'SoundLibのメイン画面。左にライブラリツリー、中央に波形サムネイル・タグ・ラウドネス付きのファイルリスト、下に選択した剣を振る音の大きな波形。',
     hero_caption: 'スクリーンショットはデモ用に合成した効果音40個で撮影しています。',
     fact1_h: 'このパソコンだけで完結', fact1_p: 'インデックス・評価・タグ・メモはすべてこの端末内に保存されます。インターネットがなくても動作します。',
@@ -540,13 +536,13 @@ const I18N = {
     send_p: '選んだ音をREAPERの編集カーソル位置にそのまま挿入します。波形で範囲を選んでおけば、その範囲だけが送られます。ドラッグ&ドロップにも対応し、それができない環境ではクリップボードにフォールバックします — 黙って失敗することはありません。',
     daws_other: '他5種のDAW', daws_clip: 'クリップボード',
     key1: '一覧を見る', key2: '再生 · 停止', key3: '評価', key4: 'DAWへ送信', key5: 'レイヤーレシピ', key6: 'ショートカット一覧',
-    dl_sub: '7日間無料体験後、買い切りライセンス$179。macOSとWindowsに対応。',
+    dl_sub: '7日間無料体験。macOSとWindowsに対応。',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: 'ファイル', spec_size: 'サイズ', spec_support: '対応環境', spec_format: '対応フォーマット',
     dl_trial_btn: '無料体験を始める',
     step1: 'ダウンロードしたインストーラーを開き、<b>SoundLib</b>をインストールします(macOSはApplicationsフォルダへドラッグ、Windowsはセットアップウィザードを実行)。',
     step2: '初回起動時のセキュリティ警告を一度許可します。以降は通常どおり起動します。',
-    step3: '体験版は<b>7日間すべての機能</b>を利用できます。期間終了後は購入したライセンスキーを入力して使い続けます。',
+    step3: '体験版は<b>7日間すべての機能</b>を利用できます。期間終了後はロックされます。',
     note_notarize_mac: 'まだApple公証を受けていないビルドのため、初回起動時にmacOSが「開発元が未確認」の警告を表示します。右クリック→開くで一度許可してください。',
     note_notarize_win: 'まだコード署名証明書のないビルドのため、初回実行時にWindows SmartScreenが「発行元不明」の警告を表示します。「詳細情報」→「実行」で一度許可してください。',
     footer1: 'SoundLib 1.0.0 — 自分のパソコンの効果音のためのライブラリ', footer2: '画面の効果音はすべてデモ用の合成音です',
@@ -557,7 +553,6 @@ const I18N = {
     lede: 'SoundLib 会为<b>你电脑上已有的音效文件夹</b>建立索引，让你搜索、试听、测量，并把选中的声音<b>直接放进 REAPER</b>。没有云端，没有账户，没有订阅。',
     cta_trial: '免费试用 7 天', cta_learn: '看看能做什么', cta_meta: 'v1.0.0 · macOS · Windows',
     price_trial_b: '7 天免费试用', price_trial_p: '— 无需绑卡，功能齐全',
-    price_buy_b: '之后 $179', price_buy_p: '买断制授权，一次性付款',
     hero_alt: 'SoundLib 主界面：左侧是库文件树，中间是带波形缩略图、标签和响度的文件列表，下方是选中的挥剑音效的波形。',
     hero_caption: '截图使用的是 40 个合成的演示音效。',
     fact1_h: '仅保存在本机', fact1_p: '索引、评分、标签、备注全部留在这台电脑上。没有网络也能照常使用。',
@@ -591,13 +586,13 @@ const I18N = {
     send_p: '把选中的声音直接放到 REAPER 编辑光标所在的位置。先在波形上选好一段，就只发送那一段。也支持拖放，在不支持的环境下会回退到剪贴板——不会悄无声息地失败。',
     daws_other: '另外 5 种 DAW', daws_clip: '剪贴板',
     key1: '浏览列表', key2: '播放 · 停止', key3: '评分', key4: '发送到 DAW', key5: '分层配方', key6: '查看全部快捷键',
-    dl_sub: '免费试用 7 天，之后 $179 买断制授权。支持 macOS 和 Windows。',
+    dl_sub: '免费试用 7 天。支持 macOS 和 Windows。',
     tab_mac: 'macOS', tab_win: 'Windows',
     spec_file: '文件', spec_size: '大小', spec_support: '系统要求', spec_format: '支持格式',
     dl_trial_btn: '获取免费试用',
     step1: '打开安装包，安装 <b>SoundLib</b>(macOS 拖入"应用程序"文件夹，Windows 运行安装向导)。',
     step2: '首次打开时允许一次安全提示，之后就能正常打开。',
-    step3: '试用版<b>7 天内可用全部功能</b>。到期后输入购买的许可证密钥即可继续使用。',
+    step3: '试用版<b>7 天内可用全部功能</b>。到期后将被锁定。',
     note_notarize_mac: '这个版本还没有经过 Apple 公证，首次打开时 macOS 会提示"无法验证开发者"。右键点击→打开，允许一次即可。',
     note_notarize_win: '这个版本还没有代码签名证书，首次运行时 Windows SmartScreen 会提示"发布者未知"。点击"更多信息"→"仍要运行"，允许一次即可。',
     footer1: 'SoundLib 1.0.0 — 为你电脑里的音效打造的库', footer2: '画面中的音效均为演示用合成音',
