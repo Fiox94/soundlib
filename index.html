@@ -732,7 +732,8 @@ fbForm.addEventListener('submit', async (e) => {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ message, _subject: 'SoundLib feedback', page_lang: document.getElementById('langPick').value }),
     })
-    if (!res.ok) throw new Error('bad status')
+    const data = await res.json()
+    if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'bad status')
     status.classList.add('ok')
     status.textContent = dict.fb_success
     fbForm.reset()
