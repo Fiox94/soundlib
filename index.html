@@ -190,6 +190,22 @@
   .note { margin-top: 18px; padding: 14px 16px; border-radius: 8px; background: var(--well); box-shadow: var(--groove-in);
     font-size: 13.5px; color: var(--dim); }
 
+  /* 피드백 — 텍스트박스 하나. 메일 앱도, 계정도, 페이지 이동도 없다. */
+  .feedback { margin: 24px 0 40px; padding: 40px; border-radius: 12px; background: var(--panel);
+    border: 1px solid var(--line); box-shadow: var(--groove-out); }
+  .feedback h2 { margin: 0 0 8px; font-size: clamp(22px, 2.6vw, 30px); font-weight: 800; }
+  .feedback p { margin: 0 0 20px; color: var(--dim); max-width: 44em; }
+  .feedback textarea { width: 100%; min-height: 120px; resize: vertical; font: 15px/1.6 var(--body); color: var(--text);
+    background: var(--well); box-shadow: var(--groove-in); border: 1px solid var(--line2); border-radius: 8px;
+    padding: 14px 16px; }
+  .feedback textarea::placeholder { color: var(--faint); }
+  .feedback .fb-row { display: flex; align-items: center; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+  .fb-status { font-size: 13.5px; color: var(--dim); }
+  .fb-status.ok { color: var(--cable); }
+  .fb-status.err { color: #ffb4b4; }
+  .fb-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  @media (max-width: 640px) { .feedback { padding: 28px 22px; } }
+
   footer { border-top: 1px solid var(--line); padding-block: 26px 40px; color: var(--faint); font-size: 13px; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
 
@@ -206,6 +222,7 @@
       <a href="#measure" data-i18n="nav_measure">재기</a>
       <a href="#recipe" data-i18n="nav_recipe">레이어 레시피</a>
       <a href="#download" data-i18n="nav_download">다운로드</a>
+      <a href="#feedback" data-i18n="nav_feedback">피드백</a>
     </nav>
     <div class="langsel">
       <select id="langPick" aria-label="Language">
@@ -381,6 +398,22 @@
       </div>
     </div>
   </section>
+
+  <section class="wrap" id="feedback">
+    <div class="feedback">
+      <span class="tag">Feedback</span>
+      <h2 data-i18n="fb_h">의견을 보내주세요</h2>
+      <p data-i18n="fb_p">버그든, 있었으면 하는 기능이든 편하게 적어주세요.</p>
+      <form id="fbForm">
+        <textarea name="message" required data-i18n-attr="placeholder:fb_placeholder" placeholder="여기에 적어주세요…"></textarea>
+        <input class="fb-hp" type="text" name="_hp" tabindex="-1" autocomplete="off">
+        <div class="fb-row">
+          <button class="btn btn-primary" type="submit" id="fbSend"><span class="led"></span><span data-i18n="fb_send">보내기</span></button>
+          <span class="fb-status" id="fbStatus" hidden></span>
+        </div>
+      </form>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -400,7 +433,7 @@ const LINKS = {
 // ── 다국어 ───────────────────────────────────────────────────────────────
 const I18N = {
   ko: {
-    nav_find: '찾기', nav_measure: '재기', nav_recipe: '레이어 레시피', nav_download: '다운로드',
+    nav_find: '찾기', nav_measure: '재기', nav_recipe: '레이어 레시피', nav_download: '다운로드', nav_feedback: '피드백',
     h1: '수십만 개의 효과음에서<br><em>그 소리</em>를 찾아 바로 DAW로.',
     lede: 'SoundLib은 <b>내 컴퓨터에 있는 효과음 폴더</b>를 색인해서 찾고, 듣고, 재고, 고른 소리를 <b>REAPER에 바로 꽂아 넣는</b> 데스크톱 앱입니다. 클라우드도, 계정도, 구독도 없습니다.',
     cta_trial: '7일 무료로 체험하기', cta_learn: '무엇을 하는지 보기', cta_meta: 'v1.0.0 · macOS · Windows',
@@ -448,10 +481,12 @@ const I18N = {
     step3: '체험판은 <b>7일간 모든 기능</b>을 씁니다. 기간이 지나면 잠깁니다.',
     note_notarize_mac: '아직 Apple 공증을 받지 않은 빌드라, 처음 열 때 macOS가 "확인되지 않은 개발자" 경고를 띄웁니다. 우클릭 → 열기로 한 번 허용하면 됩니다.',
     note_notarize_win: '아직 코드 서명 인증서가 없는 빌드라, 처음 실행할 때 Windows가 "알 수 없는 게시자" 경고(SmartScreen)를 띄웁니다. 추가 정보 → 실행으로 한 번 허용하면 됩니다.',
+    fb_h: '의견을 보내주세요', fb_p: '버그든, 있었으면 하는 기능이든 편하게 적어주세요.', fb_placeholder: '여기에 적어주세요…',
+    fb_send: '보내기', fb_sending: '보내는 중…', fb_success: '감사합니다! 보내주신 의견 잘 받았습니다.', fb_error: '전송에 실패했습니다. 잠시 후 다시 시도해주세요.',
     footer1: 'SoundLib 1.0.0 — 내 컴퓨터의 효과음을 위한 라이브러리', footer2: '화면의 효과음은 모두 데모용 합성음입니다',
   },
   en: {
-    nav_find: 'Find', nav_measure: 'Measure', nav_recipe: 'Layer Recipe', nav_download: 'Download',
+    nav_find: 'Find', nav_measure: 'Measure', nav_recipe: 'Layer Recipe', nav_download: 'Download', nav_feedback: 'Feedback',
     h1: 'Find that one sound in hundreds of thousands<br>and send it straight to your <em>DAW</em>.',
     lede: 'SoundLib indexes <b>the SFX folders already on your computer</b> so you can find, audition, measure, and drop the sound you picked <b>straight into REAPER</b>. No cloud, no account, no subscription.',
     cta_trial: 'Try free for 7 days', cta_learn: 'See what it does', cta_meta: 'v1.0.0 · macOS · Windows',
@@ -499,10 +534,12 @@ const I18N = {
     step3: 'The trial unlocks <b>every feature for 7 days</b>. After that, it locks.',
     note_notarize_mac: "This build isn't Apple-notarized yet, so macOS shows an \"unidentified developer\" warning on first open. Right-click → Open once to allow it.",
     note_notarize_win: "This build has no code-signing certificate yet, so Windows SmartScreen shows an \"unknown publisher\" warning on first run. Click More info → Run anyway once to allow it.",
+    fb_h: 'Send us your feedback', fb_p: 'Bugs, missing features, anything — write it below.', fb_placeholder: 'Type your feedback here…',
+    fb_send: 'Send', fb_sending: 'Sending…', fb_success: 'Thanks! Your feedback was sent.', fb_error: 'Something went wrong. Please try again in a moment.',
     footer1: 'SoundLib 1.0.0 — a library for the sound effects already on your computer', footer2: 'Every sound shown here is a synthesized demo',
   },
   ja: {
-    nav_find: '検索', nav_measure: '測定', nav_recipe: 'レイヤーレシピ', nav_download: 'ダウンロード',
+    nav_find: '検索', nav_measure: '測定', nav_recipe: 'レイヤーレシピ', nav_download: 'ダウンロード', nav_feedback: 'フィードバック',
     h1: '何十万もの効果音から<br>その音を見つけて、そのまま<em>DAW</em>へ。',
     lede: 'SoundLibは<b>自分のパソコンにある効果音フォルダ</b>をインデックス化し、検索・試聴・測定して、選んだ音を<b>REAPERに直接送り込む</b>デスクトップアプリです。クラウドもアカウントも定期購入もありません。',
     cta_trial: '7日間無料で試す', cta_learn: '機能を見る', cta_meta: 'v1.0.0 · macOS · Windows',
@@ -550,10 +587,12 @@ const I18N = {
     step3: '体験版は<b>7日間すべての機能</b>を利用できます。期間終了後はロックされます。',
     note_notarize_mac: 'まだApple公証を受けていないビルドのため、初回起動時にmacOSが「開発元が未確認」の警告を表示します。右クリック→開くで一度許可してください。',
     note_notarize_win: 'まだコード署名証明書のないビルドのため、初回実行時にWindows SmartScreenが「発行元不明」の警告を表示します。「詳細情報」→「実行」で一度許可してください。',
+    fb_h: 'ご意見をお聞かせください', fb_p: 'バグ報告でも、欲しい機能でも、気軽に書いてください。', fb_placeholder: 'こちらにご記入ください…',
+    fb_send: '送信', fb_sending: '送信中…', fb_success: 'ありがとうございます。送信されました。', fb_error: '送信に失敗しました。しばらくしてからもう一度お試しください。',
     footer1: 'SoundLib 1.0.0 — 自分のパソコンの効果音のためのライブラリ', footer2: '画面の効果音はすべてデモ用の合成音です',
   },
   zh: {
-    nav_find: '搜索', nav_measure: '测量', nav_recipe: '分层配方', nav_download: '下载',
+    nav_find: '搜索', nav_measure: '测量', nav_recipe: '分层配方', nav_download: '下载', nav_feedback: '反馈',
     h1: '在数十万条音效中<br>找到那个声音，直接送入<em>DAW</em>。',
     lede: 'SoundLib 会为<b>你电脑上已有的音效文件夹</b>建立索引，让你搜索、试听、测量，并把选中的声音<b>直接放进 REAPER</b>。没有云端，没有账户，没有订阅。',
     cta_trial: '免费试用 7 天', cta_learn: '看看能做什么', cta_meta: 'v1.0.0 · macOS · Windows',
@@ -601,6 +640,8 @@ const I18N = {
     step3: '试用版<b>7 天内可用全部功能</b>。到期后将被锁定。',
     note_notarize_mac: '这个版本还没有经过 Apple 公证，首次打开时 macOS 会提示"无法验证开发者"。右键点击→打开，允许一次即可。',
     note_notarize_win: '这个版本还没有代码签名证书，首次运行时 Windows SmartScreen 会提示"发布者未知"。点击"更多信息"→"仍要运行"，允许一次即可。',
+    fb_h: '欢迎提出反馈', fb_p: '无论是 bug 还是希望增加的功能，都请随意留言。', fb_placeholder: '请在此输入…',
+    fb_send: '发送', fb_sending: '发送中…', fb_success: '谢谢！反馈已发送。', fb_error: '发送失败，请稍后重试。',
     footer1: 'SoundLib 1.0.0 — 为你电脑里的音效打造的库', footer2: '画面中的音效均为演示用合成音',
   },
 }
@@ -669,6 +710,39 @@ function wireDownload() {
   }
 }
 wireDownload()
+
+// ── 피드백 폼 ────────────────────────────────────────────────────────────
+const FEEDBACK_EMAIL = ['EricLeeKr94', 'gmail.com'].join('@')
+const fbForm = document.getElementById('fbForm')
+fbForm.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  if (fbForm.elements['_hp'].value) return
+  const message = fbForm.elements['message'].value.trim()
+  if (!message) return
+  const dict = I18N[document.getElementById('langPick').value] || I18N.ko
+  const btn = document.getElementById('fbSend')
+  const status = document.getElementById('fbStatus')
+  btn.disabled = true
+  status.hidden = false
+  status.className = 'fb-status'
+  status.textContent = dict.fb_sending
+  try {
+    const res = await fetch('https://formsubmit.co/ajax/' + FEEDBACK_EMAIL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ message, _subject: 'SoundLib feedback', page_lang: document.getElementById('langPick').value }),
+    })
+    if (!res.ok) throw new Error('bad status')
+    status.classList.add('ok')
+    status.textContent = dict.fb_success
+    fbForm.reset()
+  } catch (err) {
+    status.classList.add('err')
+    status.textContent = dict.fb_error
+  } finally {
+    btn.disabled = false
+  }
+})
 </script>
 </body>
 </html>
