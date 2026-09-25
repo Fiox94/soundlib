@@ -245,7 +245,7 @@
         <div class="cta">
           <a class="btn btn-primary" href="#download"><span class="led"></span><span data-i18n="cta_trial">7일 무료로 체험하기</span></a>
           <a class="btn btn-ghost" href="#find" data-i18n="cta_learn">무엇을 하는지 보기</a>
-          <small data-i18n="cta_meta">v1.0.1 · macOS · Windows</small>
+          <small data-i18n="cta_meta">macOS · Windows</small>
         </div>
         <p class="pricebar">
           <span><i class="dot"></i><b data-i18n="price_trial_b">7일 무료 체험</b> <span data-i18n="price_trial_p">— 카드 등록 없이 전체 기능</span></span>
@@ -363,7 +363,7 @@
     <div class="dl-grid">
       <div>
         <span class="tag">Download</span>
-        <h2>SoundLib 1.0.1</h2>
+        <h2 id="dlTitle">SoundLib</h2>
         <p style="color:var(--dim);margin:0 0 18px" data-i18n="dl_sub">7일 무료 체험. macOS와 Windows에서 씁니다.</p>
 
         <div class="platform-tabs" role="tablist" aria-label="platform">
@@ -372,13 +372,13 @@
         </div>
 
         <dl class="spec" id="specMac">
-          <dt data-i18n="spec_file">파일</dt><dd>SoundLib-1.0.1-arm64.dmg</dd>
+          <dt data-i18n="spec_file">파일</dt><dd>SoundLib-arm64.dmg</dd>
           <dt data-i18n="spec_size">크기</dt><dd>~128 MB</dd>
           <dt data-i18n="spec_support">지원</dt><dd>macOS · Apple Silicon (arm64)</dd>
           <dt data-i18n="spec_format">포맷</dt><dd>WAV · AIFF · MP3 · FLAC · OGG · M4A · Opus</dd>
         </dl>
         <dl class="spec" id="specWin" hidden>
-          <dt data-i18n="spec_file">파일</dt><dd>SoundLib-Setup-1.0.1-x64.exe</dd>
+          <dt data-i18n="spec_file">파일</dt><dd>SoundLib-Setup-x64.exe</dd>
           <dt data-i18n="spec_size">크기</dt><dd>~110 MB</dd>
           <dt data-i18n="spec_support">지원</dt><dd>Windows 10/11 · 64bit</dd>
           <dt data-i18n="spec_format">포맷</dt><dd>WAV · AIFF · MP3 · FLAC · OGG · M4A · Opus</dd>
@@ -418,16 +418,19 @@
 
 <footer>
   <div class="wrap">
-    <span data-i18n="footer1">SoundLib 1.0.1 — 내 컴퓨터의 효과음을 위한 라이브러리</span>
+    <span data-i18n="footer1">SoundLib — 내 컴퓨터의 효과음을 위한 라이브러리</span>
     <span data-i18n="footer2">화면의 효과음은 모두 데모용 합성음입니다</span>
   </div>
 </footer>
 
 <script>
 // ── 배포 링크. 자리표만 채우면 버튼이 켜진다 ─────────────────────────────
+// 릴리스마다 고치는 곳은 여기 한 곳뿐이다. 설치 파일 이름에 버전이 없어서
+// 아래 링크는 늘 최신 릴리스를 받는다.
+const VERSION = '1.0.1'
 const LINKS = {
-  mac: 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-1.0.1-arm64.dmg',
-  win: 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-Setup-1.0.1-x64.exe',
+  mac: 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-arm64.dmg',
+  win: 'https://github.com/Fiox94/soundlib/releases/latest/download/SoundLib-Setup-x64.exe',
 }
 
 // ── 다국어 ───────────────────────────────────────────────────────────────
@@ -436,7 +439,7 @@ const I18N = {
     nav_find: '찾기', nav_measure: '재기', nav_recipe: '레이어 레시피', nav_download: '다운로드', nav_feedback: '피드백',
     h1: '수십만 개의 효과음에서<br><em>그 소리</em>를 찾아 바로 DAW로.',
     lede: 'SoundLib은 <b>내 컴퓨터에 있는 효과음 폴더</b>를 색인해서 찾고, 듣고, 재고, 고른 소리를 <b>REAPER에 바로 꽂아 넣는</b> 데스크톱 앱입니다. 클라우드도, 계정도, 구독도 없습니다.',
-    cta_trial: '7일 무료로 체험하기', cta_learn: '무엇을 하는지 보기', cta_meta: 'v1.0.1 · macOS · Windows',
+    cta_trial: '7일 무료로 체험하기', cta_learn: '무엇을 하는지 보기', cta_meta: 'v{v} · macOS · Windows',
     price_trial_b: '7일 무료 체험', price_trial_p: '— 카드 등록 없이 전체 기능',
     hero_alt: 'SoundLib 메인 화면. 왼쪽 라이브러리 트리, 가운데 파형 썸네일과 태그·라우드니스가 붙은 파일 목록, 아래에 선택한 칼 휘두르는 소리의 큰 파형.',
     hero_caption: '스크린샷은 데모용으로 합성한 효과음 40개로 찍었습니다.',
@@ -483,13 +486,13 @@ const I18N = {
     note_notarize_win: '아직 코드 서명 인증서가 없는 빌드라, 처음 실행할 때 Windows가 "알 수 없는 게시자" 경고(SmartScreen)를 띄웁니다. 추가 정보 → 실행으로 한 번 허용하면 됩니다.',
     fb_h: '의견을 보내주세요', fb_p: '버그든, 있었으면 하는 기능이든 편하게 적어주세요.', fb_placeholder: '여기에 적어주세요…',
     fb_send: '보내기', fb_sending: '보내는 중…', fb_success: '감사합니다! 보내주신 의견 잘 받았습니다.', fb_error: '전송에 실패했습니다. 잠시 후 다시 시도해주세요.',
-    footer1: 'SoundLib 1.0.1 — 내 컴퓨터의 효과음을 위한 라이브러리', footer2: '화면의 효과음은 모두 데모용 합성음입니다',
+    footer1: 'SoundLib {v} — 내 컴퓨터의 효과음을 위한 라이브러리', footer2: '화면의 효과음은 모두 데모용 합성음입니다',
   },
   en: {
     nav_find: 'Find', nav_measure: 'Measure', nav_recipe: 'Layer Recipe', nav_download: 'Download', nav_feedback: 'Feedback',
     h1: 'Find that one sound in hundreds of thousands<br>and send it straight to your <em>DAW</em>.',
     lede: 'SoundLib indexes <b>the SFX folders already on your computer</b> so you can find, audition, measure, and drop the sound you picked <b>straight into REAPER</b>. No cloud, no account, no subscription.',
-    cta_trial: 'Try free for 7 days', cta_learn: 'See what it does', cta_meta: 'v1.0.1 · macOS · Windows',
+    cta_trial: 'Try free for 7 days', cta_learn: 'See what it does', cta_meta: 'v{v} · macOS · Windows',
     price_trial_b: '7-day free trial', price_trial_p: '— full features, no card required',
     hero_alt: "SoundLib's main screen: library tree on the left, a file list with waveform thumbnails, tags and loudness in the middle, and the selected sword-swing sound's waveform at the bottom.",
     hero_caption: 'Screenshots use 40 synthesized demo sound effects.',
@@ -536,13 +539,13 @@ const I18N = {
     note_notarize_win: "This build has no code-signing certificate yet, so Windows SmartScreen shows an \"unknown publisher\" warning on first run. Click More info → Run anyway once to allow it.",
     fb_h: 'Send us your feedback', fb_p: 'Bugs, missing features, anything — write it below.', fb_placeholder: 'Type your feedback here…',
     fb_send: 'Send', fb_sending: 'Sending…', fb_success: 'Thanks! Your feedback was sent.', fb_error: 'Something went wrong. Please try again in a moment.',
-    footer1: 'SoundLib 1.0.1 — a library for the sound effects already on your computer', footer2: 'Every sound shown here is a synthesized demo',
+    footer1: 'SoundLib {v} — a library for the sound effects already on your computer', footer2: 'Every sound shown here is a synthesized demo',
   },
   ja: {
     nav_find: '検索', nav_measure: '測定', nav_recipe: 'レイヤーレシピ', nav_download: 'ダウンロード', nav_feedback: 'フィードバック',
     h1: '何十万もの効果音から<br>その音を見つけて、そのまま<em>DAW</em>へ。',
     lede: 'SoundLibは<b>自分のパソコンにある効果音フォルダ</b>をインデックス化し、検索・試聴・測定して、選んだ音を<b>REAPERに直接送り込む</b>デスクトップアプリです。クラウドもアカウントも定期購入もありません。',
-    cta_trial: '7日間無料で試す', cta_learn: '機能を見る', cta_meta: 'v1.0.1 · macOS · Windows',
+    cta_trial: '7日間無料で試す', cta_learn: '機能を見る', cta_meta: 'v{v} · macOS · Windows',
     price_trial_b: '7日間無料体験', price_trial_p: '— カード登録不要で全機能',
     hero_alt: 'SoundLibのメイン画面。左にライブラリツリー、中央に波形サムネイル・タグ・ラウドネス付きのファイルリスト、下に選択した剣を振る音の大きな波形。',
     hero_caption: 'スクリーンショットはデモ用に合成した効果音40個で撮影しています。',
@@ -589,13 +592,13 @@ const I18N = {
     note_notarize_win: 'まだコード署名証明書のないビルドのため、初回実行時にWindows SmartScreenが「発行元不明」の警告を表示します。「詳細情報」→「実行」で一度許可してください。',
     fb_h: 'ご意見をお聞かせください', fb_p: 'バグ報告でも、欲しい機能でも、気軽に書いてください。', fb_placeholder: 'こちらにご記入ください…',
     fb_send: '送信', fb_sending: '送信中…', fb_success: 'ありがとうございます。送信されました。', fb_error: '送信に失敗しました。しばらくしてからもう一度お試しください。',
-    footer1: 'SoundLib 1.0.1 — 自分のパソコンの効果音のためのライブラリ', footer2: '画面の効果音はすべてデモ用の合成音です',
+    footer1: 'SoundLib {v} — 自分のパソコンの効果音のためのライブラリ', footer2: '画面の効果音はすべてデモ用の合成音です',
   },
   zh: {
     nav_find: '搜索', nav_measure: '测量', nav_recipe: '分层配方', nav_download: '下载', nav_feedback: '反馈',
     h1: '在数十万条音效中<br>找到那个声音，直接送入<em>DAW</em>。',
     lede: 'SoundLib 会为<b>你电脑上已有的音效文件夹</b>建立索引，让你搜索、试听、测量，并把选中的声音<b>直接放进 REAPER</b>。没有云端，没有账户，没有订阅。',
-    cta_trial: '免费试用 7 天', cta_learn: '看看能做什么', cta_meta: 'v1.0.1 · macOS · Windows',
+    cta_trial: '免费试用 7 天', cta_learn: '看看能做什么', cta_meta: 'v{v} · macOS · Windows',
     price_trial_b: '7 天免费试用', price_trial_p: '— 无需绑卡，功能齐全',
     hero_alt: 'SoundLib 主界面：左侧是库文件树，中间是带波形缩略图、标签和响度的文件列表，下方是选中的挥剑音效的波形。',
     hero_caption: '截图使用的是 40 个合成的演示音效。',
@@ -642,7 +645,7 @@ const I18N = {
     note_notarize_win: '这个版本还没有代码签名证书，首次运行时 Windows SmartScreen 会提示"发布者未知"。点击"更多信息"→"仍要运行"，允许一次即可。',
     fb_h: '欢迎提出反馈', fb_p: '无论是 bug 还是希望增加的功能，都请随意留言。', fb_placeholder: '请在此输入…',
     fb_send: '发送', fb_sending: '发送中…', fb_success: '谢谢！反馈已发送。', fb_error: '发送失败，请稍后重试。',
-    footer1: 'SoundLib 1.0.1 — 为你电脑里的音效打造的库', footer2: '画面中的音效均为演示用合成音',
+    footer1: 'SoundLib {v} — 为你电脑里的音效打造的库', footer2: '画面中的音效均为演示用合成音',
   },
 }
 
@@ -652,7 +655,7 @@ function applyLang(lang) {
   document.documentElement.lang = lang
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const k = el.getAttribute('data-i18n')
-    if (dict[k] != null) el.textContent = dict[k]
+    if (dict[k] != null) el.textContent = dict[k].replace('{v}', VERSION)
   })
   document.querySelectorAll('[data-i18n-html]').forEach(el => {
     const k = el.getAttribute('data-i18n-html')
@@ -678,6 +681,7 @@ function detectLang() {
   return 'ko'
 }
 
+document.getElementById('dlTitle').textContent = 'SoundLib ' + VERSION
 const initialLang = detectLang()
 document.getElementById('langPick').value = initialLang
 applyLang(initialLang)
